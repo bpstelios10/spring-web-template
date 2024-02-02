@@ -1,0 +1,18 @@
+wrapper {
+    gradleVersion = "8.5"
+}
+
+subprojects {
+    apply plugin: 'java-library'
+
+    group = 'org.learnings.application_name'
+    version = '0.0.1-SNAPSHOT'
+    sourceCompatibility = JavaVersion.VERSION_21
+    targetCompatibility = JavaVersion.VERSION_21
+}
+
+ext {
+    versions = [
+            springBoot: "3.2.2"
+    ]
+}

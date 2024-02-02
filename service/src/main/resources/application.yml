@@ -1,0 +1,19 @@
+management:
+  endpoints:
+    web:
+      base-path: /private
+      exposure:
+        include: prometheus
+        exclude: metrics
+      path-mapping:
+        prometheus: metrics
+
+server:
+  servlet:
+    context-path: /application_name
+  tomcat:
+    accept-count: 120
+    mbeanregistry:
+      enabled: true
+    threads:
+      max: 1200
