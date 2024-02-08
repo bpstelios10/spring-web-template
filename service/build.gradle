@@ -20,6 +20,7 @@ dependencies {
     implementation "org.springframework.boot:spring-boot-starter-web:${versions.springBoot}"
     implementation "org.springframework.boot:spring-boot-starter-actuator:${versions.springBoot}"
     implementation "org.springframework.boot:spring-boot-starter-validation:${versions.springBoot}"
+    implementation "org.springframework.boot:spring-boot-starter-security:${versions.springBoot}"
 
     compileOnly 'org.projectlombok:lombok:1.18.42'
     annotationProcessor 'org.projectlombok:lombok:1.18.42'
