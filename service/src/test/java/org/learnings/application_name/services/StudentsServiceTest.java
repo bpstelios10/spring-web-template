@@ -1,7 +1,11 @@
 package org.learnings.application_name.services;
 
 import org.junit.jupiter.api.Test;
-import org.learnings.application_name.model.Student;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.learnings.application_name.repositories.StudentsRepository;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.time.Instant;
 import java.util.Date;
@@ -11,11 +15,15 @@ import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+@ExtendWith(MockitoExtension.class)
 class StudentsServiceTest {
 
-    private final StudentsService service = new StudentsService();
-    private final Student expectedStudent =
-            new Student(
+    @Mock
+    private StudentsRepository repository;
+    @InjectMocks
+    private StudentsService service;
+    private final StudentDTO expectedStudent =
+            new StudentDTO(
                     UUID.fromString("f9734631-6833-4885-93c5-dd41679fc908"),
                     "fullName1",
                     3,
@@ -24,7 +32,7 @@ class StudentsServiceTest {
 
     @Test
     void getAllStudents() {
-        List<Student> allStudents = service.getAllStudents();
+        List<StudentDTO> allStudents = service.getAllStudents();
 
         assertThat(allStudents).hasSize(3);
         assertThat(allStudents).contains(expectedStudent);
@@ -32,7 +40,7 @@ class StudentsServiceTest {
 
     @Test
     void getStudentByID_whenStudentExists() {
-        Optional<Student> studentByID = service.getStudentByID(UUID.fromString("f9734631-6833-4885-93c5-dd41679fc908"));
+        Optional<StudentDTO> studentByID = service.getStudentByID(UUID.fromString("f9734631-6833-4885-93c5-dd41679fc908"));
 
         assertThat(studentByID).isNotEmpty();
         assertThat(studentByID.get()).isEqualTo(expectedStudent);
@@ -40,14 +48,14 @@ class StudentsServiceTest {
 
     @Test
     void getStudentByID_whenStudentNotExists() {
-        Optional<Student> studentByID = service.getStudentByID(UUID.fromString("f9734631-6833-4885-93c5-dd41679fc909"));
+        Optional<StudentDTO> studentByID = service.getStudentByID(UUID.fromString("f9734631-6833-4885-93c5-dd41679fc909"));
 
         assertThat(studentByID).isEmpty();
     }
 
     @Test
     void createStudent_whenStudentNotExists() {
-        service.createStudent(new Student(
+        service.createStudent(new StudentDTO(
                 UUID.fromString("f9734631-6833-4885-93c5-dd41679fc904"),
                 "fullName1",
                 3,
