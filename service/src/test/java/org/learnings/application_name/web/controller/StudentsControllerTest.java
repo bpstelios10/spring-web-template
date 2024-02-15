@@ -2,7 +2,7 @@ package org.learnings.application_name.web.controller;
 
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.learnings.application_name.model.Student;
+import org.learnings.application_name.services.StudentDTO;
 import org.learnings.application_name.services.StudentsService;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
@@ -29,24 +29,24 @@ class StudentsControllerTest {
     @InjectMocks
     private StudentsController controller;
 
-    private final List<Student> dataSource = List.of(
-            new Student(UUID.fromString("f9734631-6833-4885-93c5-dd41679fc908"), "att1", 3, Date.from(Instant.parse("2024-02-01T08:15:24.00Z"))),
-            new Student(UUID.randomUUID(), "att2", 5, Date.from(Instant.now().minus(Duration.ofDays(2)))),
-            new Student(UUID.randomUUID(), "att3", 1, Date.from(Instant.now().minus(Duration.ofDays(30))))
+    private final List<StudentDTO> dataSource = List.of(
+            new StudentDTO(UUID.fromString("f9734631-6833-4885-93c5-dd41679fc908"), "att1", 3, Date.from(Instant.parse("2024-02-01T08:15:24.00Z"))),
+            new StudentDTO(UUID.randomUUID(), "att2", 5, Date.from(Instant.now().minus(Duration.ofDays(2)))),
+            new StudentDTO(UUID.randomUUID(), "att3", 1, Date.from(Instant.now().minus(Duration.ofDays(30))))
     );
 
     @Test
     void getAllStudents_whenStudentsExist() {
         when(service.getAllStudents()).thenReturn(dataSource);
-        Student expectedStudent =
-                new Student(
+        StudentDTO expectedStudent =
+                new StudentDTO(
                         UUID.fromString("f9734631-6833-4885-93c5-dd41679fc908"),
                         "att1",
                         3,
                         Date.from(Instant.parse("2024-02-01T08:15:24.00Z"))
                 );
 
-        ResponseEntity<List<Student>> responseEntity = controller.getAllStudents();
+        ResponseEntity<List<StudentDTO>> responseEntity = controller.getAllStudents();
 
         assertThat(responseEntity.getStatusCode()).isEqualTo(OK);
         assertThat(responseEntity.getBody()).hasSize(3);
@@ -57,7 +57,7 @@ class StudentsControllerTest {
     void getAllStudents_whenStudentsEmpty() {
         when(service.getAllStudents()).thenReturn(List.of());
 
-        ResponseEntity<List<Student>> responseEntity = controller.getAllStudents();
+        ResponseEntity<List<StudentDTO>> responseEntity = controller.getAllStudents();
 
         assertThat(responseEntity.getStatusCode()).isEqualTo(OK);
         assertThat(responseEntity.getBody()).hasSize(0);
@@ -65,8 +65,8 @@ class StudentsControllerTest {
 
     @Test
     void getStudentByID_whenStudentsExist() {
-        Student expectedStudent =
-                new Student(
+        StudentDTO expectedStudent =
+                new StudentDTO(
                         UUID.fromString("f9734631-6833-4885-93c5-dd41679fc908"),
                         "att1",
                         3,
@@ -74,7 +74,7 @@ class StudentsControllerTest {
                 );
         when(service.getStudentByID(UUID.fromString("f9734631-6833-4885-93c5-dd41679fc908"))).thenReturn(Optional.of(expectedStudent));
 
-        ResponseEntity<Student> responseEntity = controller.getStudentByID("f9734631-6833-4885-93c5-dd41679fc908");
+        ResponseEntity<StudentDTO> responseEntity = controller.getStudentByID("f9734631-6833-4885-93c5-dd41679fc908");
 
         assertThat(responseEntity.getStatusCode()).isEqualTo(OK);
         assertThat(responseEntity.getBody()).isEqualTo(expectedStudent);
@@ -84,15 +84,15 @@ class StudentsControllerTest {
     void getStudentByID_whenStudentsEmpty() {
         when(service.getStudentByID(UUID.fromString("f9734631-6833-4885-93c5-dd41679fc908"))).thenReturn(Optional.empty());
 
-        ResponseEntity<Student> responseEntity = controller.getStudentByID("f9734631-6833-4885-93c5-dd41679fc908");
+        ResponseEntity<StudentDTO> responseEntity = controller.getStudentByID("f9734631-6833-4885-93c5-dd41679fc908");
 
         assertThat(responseEntity.getStatusCode()).isEqualTo(OK);
     }
 
     @Test
     void createStudent_succeeds() {
-        Student expectedStudent =
-                new Student(
+        StudentDTO expectedStudent =
+                new StudentDTO(
                         UUID.fromString("f9734631-6833-4885-93c5-dd41679fc908"),
                         "att1",
                         3,

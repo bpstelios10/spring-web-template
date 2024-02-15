@@ -5,7 +5,7 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
 import lombok.extern.slf4j.Slf4j;
-import org.learnings.application_name.model.Student;
+import org.learnings.application_name.services.StudentDTO;
 import org.learnings.application_name.services.StudentsService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -25,15 +25,15 @@ public class StudentsController {
         this.studentsService = studentsService;
     }
 
-    @GetMapping
-    public ResponseEntity<List<Student>> getAllStudents() {
+    @GetMapping("/")
+    public ResponseEntity<List<StudentDTO>> getAllStudents() {
         log.debug("requested all students");
 
         return ResponseEntity.ok(studentsService.getAllStudents());
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Student> getStudentByID(@PathVariable String id) {
+    public ResponseEntity<StudentDTO> getStudentByID(@PathVariable String id) {
         log.debug("requested student with id [{}]", id);
         //add check to validate id is uuid
         UUID requestID = UUID.fromString(id);
@@ -41,9 +41,16 @@ public class StudentsController {
         return ResponseEntity.ok(studentsService.getStudentByID(requestID).orElse(null));
     }
 
+    @GetMapping
+    public ResponseEntity<StudentDTO> searchStudentByName(@RequestParam String name) {
+        log.debug("requested student with name like [{}]", name);
+
+        return ResponseEntity.ok(studentsService.searchStudentByName(name).orElse(null));
+    }
+
     @PostMapping
     public ResponseEntity<Void> createStudent(@Valid @RequestBody StudentsController.CreateStudentRequestBody requestBody) {
-        Student student = new Student(requestBody.id(), requestBody.fullname(), requestBody.currentSemester(), requestBody.entryDate());
+        StudentDTO student = new StudentDTO(requestBody.id(), requestBody.fullname(), requestBody.currentSemester(), requestBody.entryDate());
         studentsService.createStudent(student);
 
         return ResponseEntity.ok().build();
