@@ -1,0 +1,12 @@
+version: '3.8'
+
+services:
+  service:
+    build: service
+    environment:
+      - DEPLOYMENT_ENVIRONMENT=docker-compose
+#      for java remote debugger open a port, eg 5005:
+#      - JAVA_OPTIONS=-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:5005
+    ports:
+      - "8080:8080"
+#      - "5005:5005"

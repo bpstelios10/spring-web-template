@@ -5,7 +5,7 @@ buildscript {
         gradlePluginPortal()
     }
     dependencies {
-        classpath 'org.springframework.boot:spring-boot-gradle-plugin:3.2.0'
+        classpath 'org.springframework.boot:spring-boot-gradle-plugin:3.2.3'
     }
 }
 
@@ -27,7 +27,12 @@ dependencies {
     implementation 'io.micrometer:micrometer-registry-prometheus:1.12.2'
     implementation 'io.prometheus:simpleclient_hotspot:0.16.0'
 
-    testImplementation "org.springframework.boot:spring-boot-starter-test:${versions.springBoot}"
+    testImplementation("org.springframework.boot:spring-boot-starter-test:${versions.springBoot}") {
+        exclude group: 'com.jayway.jsonpath', module: 'json-path' // to get rid of annoying warning
+    }
 
     test.useJUnitPlatform()
 }
+
+jar.enabled=false
+bootJar.archiveFileName='service.jar'
