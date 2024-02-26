@@ -1,3 +1,21 @@
 server:
-    threads:
-      max: 1000
+  threads:
+    max: 400
+
+## PostgreSQL
+spring:
+  datasource:
+    driverClassName: 'org.postgresql.Driver'
+    url: 'jdbc:postgresql://postgres-db:5432/students'
+    ## default connection pool
+#    hikari:
+#      connectionTimeout: 20000
+#      maximumPoolSize: 5
+    # create and drop table, good for testing, production set to none or comment it
+    jpa:
+      hibernate:
+        ddl-auto: 'create-drop'
+      show-sql: true
+    h2:
+      console:
+        enabled: false

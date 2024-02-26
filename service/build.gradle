@@ -25,6 +25,7 @@ dependencies {
     compileOnly 'org.projectlombok:lombok:1.18.42'
     annotationProcessor 'org.projectlombok:lombok:1.18.42'
 
+    implementation 'org.postgresql:postgresql:42.7.2'
     runtimeOnly 'com.h2database:h2:2.1.214'
 
     implementation 'io.micrometer:micrometer-registry-prometheus:1.16.1'

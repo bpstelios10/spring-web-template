@@ -29,10 +29,10 @@ spring:
   datasource:
     url: 'jdbc:h2:mem:students'
     driverClassName: 'org.h2.Driver'
-    username: 'dbuser'
-    password: 'dbpass'
+    username: ${DB_USERNAME:dbuser}
+    password: ${DB_PASSWORD:dbpass}
   jpa:
-    database-platform: 'org.hibernate.dialect.H2Dialect'
+    database-platform: 'org.hibernate.dialect.PostgreSQLDialect'
     hibernate:
       ddl-auto: 'create'
     show-sql: true
