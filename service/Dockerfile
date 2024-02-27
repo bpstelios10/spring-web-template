@@ -22,6 +22,6 @@ COPY scripts/startup.sh /home/app_executor
 COPY build/libs/service.jar /home/app_executor
 
 # set user of the container
-# USER app_executor
+USER app_executor
 
 CMD /home/app_executor/startup.sh
