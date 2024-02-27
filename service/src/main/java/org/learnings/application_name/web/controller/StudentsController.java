@@ -42,10 +42,10 @@ public class StudentsController {
     }
 
     @GetMapping
-    public ResponseEntity<StudentDTO> searchStudentByName(@RequestParam String name) {
+    public ResponseEntity<List<StudentDTO>> searchStudentByName(@RequestParam String name) {
         log.debug("requested student with name like [{}]", name);
 
-        return ResponseEntity.ok(studentsService.searchStudentByName(name).orElse(null));
+        return ResponseEntity.ok(studentsService.searchStudentByName(name));
     }
 
     @PostMapping

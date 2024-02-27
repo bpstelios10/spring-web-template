@@ -11,11 +11,11 @@ spring:
 #    hikari:
 #      connectionTimeout: 20000
 #      maximumPoolSize: 5
-    # create and drop table, good for testing, production set to none or comment it
-    jpa:
-      hibernate:
-        ddl-auto: 'create-drop'
-      show-sql: true
-    h2:
-      console:
-        enabled: false
+  sql:
+    init:
+      mode: 'always'
+      schema-locations: 'classpath:schema-local.sql'
+      data-locations: 'classpath:data-embedded.sql'
+  h2:
+    console:
+      enabled: false
