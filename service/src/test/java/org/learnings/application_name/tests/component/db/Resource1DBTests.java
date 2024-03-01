@@ -1,4 +1,4 @@
-package org.learnings.application_name.tests.components.db;
+package org.learnings.application_name.tests.component.db;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
