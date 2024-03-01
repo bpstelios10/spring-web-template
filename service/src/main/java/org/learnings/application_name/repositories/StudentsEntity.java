@@ -8,7 +8,7 @@ import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-import java.util.Date;
+import java.sql.Timestamp;
 import java.util.UUID;
 
 @Entity
@@ -22,5 +22,5 @@ public class StudentsEntity {
     private UUID id;
     private String fullName;
     private int currentSemester;
-    private Date entryDate;
+    private Timestamp entryDate;
 }
