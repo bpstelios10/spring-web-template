@@ -9,4 +9,13 @@
     <root level="DEBUG">
         <appender-ref ref="STDOUT" />
     </root>
+
+    <!-- profiles only get activated in component tests. or else value is null and root is applied -->
+    <!-- during component tests, if root log level needs to be changed, it has to go below this line,
+         so that it overrides the previous assignment -->
+    <springProfile name="component-test | component-test-exported-metrics">
+        <root level="INFO">
+            <appender-ref ref="STDOUT" />
+        </root>
+    </springProfile>
 </configuration>

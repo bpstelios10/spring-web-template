@@ -1,0 +1,3 @@
+management:
+  prometheus:
+    metrics.export.enabled: true

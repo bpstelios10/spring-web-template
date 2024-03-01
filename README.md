@@ -17,3 +17,5 @@ Copy the project and change `application_name` in configuration and packages
   input data
 * basic-auth -> on top of functional controller, spring security with basic auth was added. different roles and
   different endpoints to mix it up
+* spring-data-h2 -> service that uses spring-data-jpa with h2 for local executions and postgres for docker-compose
+* spring-data-rest -> used spring-data-rest to create different APIs based on repository (db-centric architecture)
