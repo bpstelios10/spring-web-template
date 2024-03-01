@@ -1,3 +1,8 @@
 management:
   prometheus:
     metrics.export.enabled: true
+
+spring:
+  datasource:
+    hikari:
+      maximumPoolSize: 1
