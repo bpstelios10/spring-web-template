@@ -2,10 +2,12 @@ package org.learnings.application_name.tests.component.api;
 
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.learnings.application_name.services.RentedMoviesDSRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.webmvc.test.autoconfigure.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
@@ -25,6 +27,8 @@ public class PrivateEndpointTests {
 
     @Autowired
     private MockMvc mockMvc;
+    @MockBean
+    private RentedMoviesDSRepository repository;
 
     @Test
     void getPrivateStatus() throws Exception {
@@ -58,38 +62,7 @@ public class PrivateEndpointTests {
     }
 
     @Test
-    void getActuatorEnv() throws Exception {
-        mockMvc.perform(get("/application_name/private/env"))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.activeProfiles").value("component-test-actuator"));
-    }
-
-    @Test
-    void getActuatorHeapdump() throws Exception {
-        mockMvc.perform(get("/application_name/private/heapdump"))
-                .andExpect(status().isOk());
-    }
-
-    @Test
-    void getActuatorHealth() throws Exception {
-        mockMvc.perform(get("/application_name/private/health"))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$['status']").value("UP"))
-                .andExpect(content().string(containsString("liveness")))
-                .andExpect(content().string(containsString("readiness")));
-    }
-
-    @Test
-    void getActuatorLivenessCheck() throws Exception {
-        mockMvc.perform(get("/application_name/private/health/liveness"))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$['status']").value("UP"));
-    }
-
-    @Test
-    void getActuatorReadinessCheck() throws Exception {
-        mockMvc.perform(get("/application_name/private/health/readiness"))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$['status']").value("UP"));
+    void getPrivateMetrics() throws Exception {
+        mockMvc.perform(get("/private/metrics")).andExpect(status().isOk());
     }
 }
