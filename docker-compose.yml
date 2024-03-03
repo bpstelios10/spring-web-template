@@ -1,12 +1,20 @@
-version: '3.8'
+version: '3.9'
 
 services:
-  service:
-    build: service
-    environment:
-      - DEPLOYMENT_ENVIRONMENT=docker-compose
-#      for java remote debugger open a port, eg 5005:
-#      - JAVA_OPTIONS=-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:5005
+#  service:
+#    build: service
+#    environment:
+#      - DEPLOYMENT_ENVIRONMENT=docker-compose
+##      for java remote debugger open a port, eg 5005:
+##      - JAVA_OPTIONS=-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:5005
+#    ports:
+#      - "8080:8080"
+##      - "5005:5005"
+
+  cassandra:
+    build: cassandra
     ports:
-      - "8080:8080"
-#      - "5005:5005"
+      - "9042:9042"
+
+volumes:
+  dbdata6:
