@@ -60,7 +60,7 @@ public class FunctionalEndpointTests {
         UUID UUID1 = UUID.randomUUID();
         mockMvc.perform(post("/resource1")
                 .contentType(MediaType.APPLICATION_JSON)
-                .content("{\"id\":\"" + UUID1 + "\",\"attr1\":\"att1\",\"attr2\":3,\"attr3\":\"2024-02-01T08:15:24.000+00:00\"}")
+                .content("{\"id\":\"" + UUID1 + "\",\"attr1\":\"att1\",\"attr2\":3,\"attr3\":\"2024-02-01 08:15\"}")
         ).andExpect(status().isOk()).andExpect(content().string(blankOrNullString()));
         mockMvc.perform(get("/resource1/" + UUID1))
                 .andExpect(status().isOk())

@@ -1,5 +1,6 @@
 package org.learnings.application_name.web.controller;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -26,30 +27,47 @@ public class FunctionalController {
     }
 
     @GetMapping
-    public ResponseEntity<List<FunctionalResource>> getAllResource1() {
+    public ResponseEntity<List<Resource1ResponseModel>> getAllResource1() {
         log.debug("requested all resources");
 
-        return ResponseEntity.ok(functionalService.getAllResource1());
+        return ResponseEntity.ok(
+                functionalService.getAllResource1()
+                        .stream()
+                        .map(Resource1ResponseModel::fromDomainObject)
+                        .toList());
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<FunctionalResource> getResource1ByID(@PathVariable String id) {
+    public ResponseEntity<Resource1ResponseModel> getResource1ByID(@PathVariable String id) {
         log.debug("requested resource with id [{}]", id);
         //add check to validate id is uuid
         UUID requestID = UUID.fromString(id);
 
-        return ResponseEntity.ok(functionalService.getResource1ByID(requestID).orElse(null));
+        return ResponseEntity.ok(
+                functionalService.getResource1ByID(requestID)
+                        .map(Resource1ResponseModel::fromDomainObject)
+                        .orElse(null));
     }
 
     @PostMapping
-    public ResponseEntity<Void> createResource1(@Valid @RequestBody CreateResource1RequestBody requestBody) {
-        FunctionalResource functionalResource = new FunctionalResource(requestBody.id(), requestBody.attr1(), requestBody.attr2(), requestBody.attr3());
-        functionalService.createResource1(functionalResource);
+    public ResponseEntity<Void> createResource1(@Valid @RequestBody FunctionalController.Resource1RequestModel requestBody) {
+        functionalService.createResource1(requestBody.toDomainObject());
 
         return ResponseEntity.ok().build();
     }
 
-    record CreateResource1RequestBody(@NotNull UUID id, @NotBlank String attr1, @Positive int attr2,
-                                              @NotNull Date attr3) {
+    record Resource1RequestModel(@NotNull UUID id, @NotBlank String attr1, @Positive int attr2,
+                                 @NotNull @JsonFormat(pattern = "dd-MM-yyyy HH:mm") Date attr3) {
+        FunctionalResource toDomainObject() {
+            return new FunctionalResource(id, attr1, attr2, attr3);
+        }
+    }
+
+    record Resource1ResponseModel(@NotNull UUID id, @NotBlank String attr1, @Positive int attr2,
+                                  @NotNull @JsonFormat(pattern = "dd-MM-yyyy HH:mm") Date attr3) {
+        static Resource1ResponseModel fromDomainObject(FunctionalResource functionalResource) {
+            return new Resource1ResponseModel(functionalResource.id(), functionalResource.attribute1(), functionalResource.attribute2(),
+                    functionalResource.attribute3());
+        }
     }
 }
