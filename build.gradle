@@ -13,6 +13,6 @@ subprojects {
 
 ext {
     versions = [
-            springBoot: "3.2.2"
+            springBoot: "3.2.3"
     ]
 }

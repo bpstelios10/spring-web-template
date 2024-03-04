@@ -1,12 +1,17 @@
 management:
+  server:
+    port: 8081
   endpoints:
     web:
-      base-path: /private
+      base-path: /application_name/private
       exposure:
-        include: prometheus
-        exclude: metrics
+        include: prometheus,configprops,env,health,heapdump
       path-mapping:
         prometheus: metrics
+  endpoint:
+    health:
+      probes:
+        enabled: true
 
 server:
   servlet:
