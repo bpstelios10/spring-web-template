@@ -1,20 +1,28 @@
 version: '3.9'
 
 services:
-#  service:
-#    build: service
-#    environment:
-#      - DEPLOYMENT_ENVIRONMENT=docker-compose
-##      for java remote debugger open a port, eg 5005:
-##      - JAVA_OPTIONS=-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:5005
-#    ports:
-#      - "8080:8080"
-##      - "5005:5005"
-
   cassandra:
     build: cassandra
     ports:
       - "9042:9042"
+    healthcheck:
+      test: cqlsh -k system
+      interval: 5s
+      timeout: 10s
+      retries: 15
+
+  service:
+    build: service
+    environment:
+      - DEPLOYMENT_ENVIRONMENT=docker-compose
+    #      for java remote debugger open a port, eg 5005:
+    #      - JAVA_OPTIONS=-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:5005
+    ports:
+      - "8080:8080"
+    #      - "5005:5005"
+    depends_on:
+      cassandra:
+        condition: service_healthy
 
 volumes:
   dbdata6:

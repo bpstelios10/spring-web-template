@@ -1,4 +1,4 @@
-package org.learnings.application_name.web.error;
+package org.learnings.application_name.infrastructure.web.error;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;

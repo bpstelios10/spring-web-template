@@ -1,6 +1,5 @@
 package org.learnings.application_name.services;
 
-import org.learnings.application_name.model.RentedMovie;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
@@ -11,24 +10,29 @@ import java.util.UUID;
 public class WatchedMoviesService {
 
     private final RentedMoviesDSRepository repository;
+    private final IRentedMoviesEntityFactory rentedMovieEntityFactory;
 
-    public WatchedMoviesService(RentedMoviesDSRepository repository) {
+    public WatchedMoviesService(RentedMoviesDSRepository repository, IRentedMoviesEntityFactory rentedMovieEntityFactory) {
         this.repository = repository;
+        this.rentedMovieEntityFactory = rentedMovieEntityFactory;
     }
 
     public List<RentedMovieDTO> getAllRentedMoviesOfClient(UUID clientUUID) {
-        return repository.findByClientID(clientUUID).stream().map(RentedMovieDTO::fromRentedMovie).toList();
+        return repository.findByRentedMoviesEntityKeyClientID(clientUUID).stream().map(RentedMovieDTO::fromRentedMovieEntity).toList();
     }
 
     public Optional<RentedMovieDTO> getRentedMovieForClient(UUID clientUUID, UUID movieID) {
-        return Optional.ofNullable(repository.findByClientIDAndMovieID(clientUUID, movieID)).map(RentedMovieDTO::fromRentedMovie);
+        return repository.findByRentedMoviesEntityKeyClientIDAndRentedMoviesEntityKeyMovieID(clientUUID, movieID).map(RentedMovieDTO::fromRentedMovieEntity);
     }
 
     public void addRentedMovieToClient(RentedMovieDTO rentedMovieDTO) {
-        if (repository.findByClientIDAndMovieID(rentedMovieDTO.clientID(), rentedMovieDTO.movieID()) == null)
-            repository.save(RentedMovieDTO.toRentedMovie(rentedMovieDTO));
+        RentedMovieDTO toBeSaved;
+        if (repository.findByRentedMoviesEntityKeyClientIDAndRentedMoviesEntityKeyMovieID(rentedMovieDTO.clientID(), rentedMovieDTO.movieID()).isEmpty())
+            toBeSaved = rentedMovieDTO;
         else
-            repository.save(new RentedMovie(rentedMovieDTO.clientID(), rentedMovieDTO.movieID(),
-                    rentedMovieDTO.timesRented() + 1, rentedMovieDTO.dateRented()));
+            toBeSaved = new RentedMovieDTO(rentedMovieDTO.clientID(), rentedMovieDTO.movieID(),
+                    rentedMovieDTO.timesRented() + 1, rentedMovieDTO.dateRented());
+
+        repository.save(rentedMovieEntityFactory.fromRentedMovieDTO(toBeSaved));
     }
 }

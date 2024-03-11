@@ -1,5 +1,6 @@
-package org.learnings.application_name.web.controller;
+package org.learnings.application_name.infrastructure.web.controller;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
@@ -54,6 +55,7 @@ public class WatchedMoviesController {
         return ResponseEntity.ok().build();
     }
 
-    record AddRentedMovieRequestBody(@NotNull UUID movieID, @Positive int timesRented, @NotNull Date dateRented) {
+    record AddRentedMovieRequestBody(@NotNull UUID movieID, @Positive int timesRented,
+                                     @NotNull @JsonFormat(pattern = "dd-MM-yyyy HH:mm") Date dateRented) {
     }
 }
