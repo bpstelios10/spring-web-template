@@ -24,3 +24,15 @@ server:
       enabled: true
     threads:
       max: 1200
+
+spring:
+  data:
+    cassandra:
+      contact-points: localhost
+      port: 9042
+      username: 'cassandra'
+      password: 'cassandra'
+      datacenter: 'datacenter1'
+      keyspace: 'test_keyspace'
+      schema-action: RECREATE_DROP_UNUSED
+      enable-ssl-encryption: false

@@ -1,14 +1,13 @@
 package org.learnings.application_name.services;
 
-import org.learnings.application_name.model.RentedMovie;
-
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 public interface RentedMoviesDSRepository {
-    List<RentedMovie> findByClientID(UUID clientUUID);
+    List<IRentedMoviesEntity> findByRentedMoviesEntityKeyClientID(UUID clientID);
 
-    RentedMovie findByClientIDAndMovieID(UUID clientUUID, UUID movieID);
+    Optional<IRentedMoviesEntity> findByRentedMoviesEntityKeyClientIDAndRentedMoviesEntityKeyMovieID(UUID clientID, UUID movieID);
 
-    void save(RentedMovie rentedMovie);
+    IRentedMoviesEntity save(IRentedMoviesEntity rentedMovie);
 }

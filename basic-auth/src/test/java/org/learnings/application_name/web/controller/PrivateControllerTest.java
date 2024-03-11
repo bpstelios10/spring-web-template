@@ -1,4 +1,4 @@
-package org.learnings.application_name.web.controller;
+package org.learnings.application_name.infrastructure.web.controller;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpStatus;

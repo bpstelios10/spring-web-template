@@ -1,4 +1,4 @@
-package org.learnings.application_name.web.controller;
+package org.learnings.application_name.infrastructure.web.controller;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
