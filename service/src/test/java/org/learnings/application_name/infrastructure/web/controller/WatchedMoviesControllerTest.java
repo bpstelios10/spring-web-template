@@ -40,10 +40,11 @@ class WatchedMoviesControllerTest {
     @Test
     void getAllRentedMoviesOfClient_whenRentedMoviesExist() {
         when(service.getAllRentedMoviesOfClient(clientUUID)).thenReturn(dataSource);
-        RentedMovieDTO expectedRentedMovie = new RentedMovieDTO(clientUUID, firstMovieUUID, 3,
-                Date.from(Instant.parse("2024-02-01T08:15:24.00Z")));
+        WatchedMoviesController.RentedMovieResponseModel expectedRentedMovie =
+                new WatchedMoviesController.RentedMovieResponseModel(clientUUID, firstMovieUUID, 3,
+                        Date.from(Instant.parse("2024-02-01T08:15:24.00Z")));
 
-        ResponseEntity<List<RentedMovieDTO>> response = controller.getAllRentedMoviesOfClient(clientUUID.toString());
+        ResponseEntity<List<WatchedMoviesController.RentedMovieResponseModel>> response = controller.getAllRentedMoviesOfClient(clientUUID.toString());
 
         assertThat(response.getStatusCode()).isEqualTo(OK);
         assertThat(response.getBody()).hasSize(3);
@@ -54,7 +55,7 @@ class WatchedMoviesControllerTest {
     void getAllRentedMoviesOfClient_whenRentedMoviesEmpty() {
         when(service.getAllRentedMoviesOfClient(clientUUID)).thenReturn(List.of());
 
-        ResponseEntity<List<RentedMovieDTO>> response = controller.getAllRentedMoviesOfClient(clientUUID.toString());
+        ResponseEntity<List<WatchedMoviesController.RentedMovieResponseModel>> response = controller.getAllRentedMoviesOfClient(clientUUID.toString());
 
         assertThat(response.getStatusCode()).isEqualTo(OK);
         assertThat(response.getBody()).hasSize(0);
@@ -62,22 +63,25 @@ class WatchedMoviesControllerTest {
 
     @Test
     void getRentedMovieForClient_whenRentedMoviesExist() {
-        RentedMovieDTO expectedRentedMovies = new RentedMovieDTO(UUID.randomUUID(), firstMovieUUID, 3,
-                Date.from(Instant.parse("2024-02-01T08:15:24.00Z")));
+        UUID clientID = UUID.randomUUID();
+        WatchedMoviesController.RentedMovieResponseModel expectedRentedMoviesResponse =
+                new WatchedMoviesController.RentedMovieResponseModel(clientID, firstMovieUUID, 3, Date.from(Instant.parse("2024-02-01T08:15:24.00Z")));
+        RentedMovieDTO expectedRentedMovies =
+                new RentedMovieDTO(clientID, firstMovieUUID, 3, Date.from(Instant.parse("2024-02-01T08:15:24.00Z")));
         when(service.getRentedMovieForClient(clientUUID, firstMovieUUID)).thenReturn(Optional.of(expectedRentedMovies));
 
-        ResponseEntity<RentedMovieDTO> response =
+        ResponseEntity<WatchedMoviesController.RentedMovieResponseModel> response =
                 controller.getRentedMovieForClient(clientUUID.toString(), "f9734631-6833-4885-93c5-dd41679fc908");
 
         assertThat(response.getStatusCode()).isEqualTo(OK);
-        assertThat(response.getBody()).isEqualTo(expectedRentedMovies);
+        assertThat(response.getBody()).isEqualTo(expectedRentedMoviesResponse);
     }
 
     @Test
     void getRentedMovieForClient_whenRentedMoviesEmpty() {
         when(service.getRentedMovieForClient(clientUUID, firstMovieUUID)).thenReturn(Optional.empty());
 
-        ResponseEntity<RentedMovieDTO> response =
+        ResponseEntity<WatchedMoviesController.RentedMovieResponseModel> response =
                 controller.getRentedMovieForClient(clientUUID.toString(), "f9734631-6833-4885-93c5-dd41679fc908");
 
         assertThat(response.getStatusCode()).isEqualTo(OK);
@@ -87,7 +91,7 @@ class WatchedMoviesControllerTest {
     void addRentedMovieToClient() {
         RentedMovieDTO expectedRentedMovie = new RentedMovieDTO(clientUUID, firstMovieUUID, 3,
                 Date.from(Instant.parse("2024-02-01T08:15:24.00Z")));
-        WatchedMoviesController.AddRentedMovieRequestBody requestBody = new WatchedMoviesController.AddRentedMovieRequestBody(
+        WatchedMoviesController.RentedMovieRequestModel requestBody = new WatchedMoviesController.RentedMovieRequestModel(
                 expectedRentedMovie.movieID(), expectedRentedMovie.timesRented(), expectedRentedMovie.dateRented());
         doNothing().when(service).addRentedMovieToClient(expectedRentedMovie);
 

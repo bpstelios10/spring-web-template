@@ -26,26 +26,35 @@ public class WatchedMoviesController {
     }
 
     @GetMapping
-    public ResponseEntity<List<RentedMovieDTO>> getAllRentedMoviesOfClient(@PathVariable String clientID) {
+    public ResponseEntity<List<RentedMovieResponseModel>> getAllRentedMoviesOfClient(@PathVariable String clientID) {
         log.debug("requested all rented movies for clientID [{}]", clientID);
         UUID clientUUID = UUID.fromString(clientID);
 
-        return ResponseEntity.ok(watchedMoviesService.getAllRentedMoviesOfClient(clientUUID));
+        return ResponseEntity.ok(
+                watchedMoviesService.getAllRentedMoviesOfClient(clientUUID)
+                        .stream()
+                        .map(RentedMovieResponseModel::fromDTO)
+                        .toList()
+        );
     }
 
     @GetMapping("/{movieID}")
-    public ResponseEntity<RentedMovieDTO> getRentedMovieForClient(@PathVariable String clientID, @PathVariable String movieID) {
+    public ResponseEntity<RentedMovieResponseModel> getRentedMovieForClient(@PathVariable String clientID, @PathVariable String movieID) {
         log.debug("requested movie with id [{}], for client with id [{}]", movieID, clientID);
         //add check to validate movieID is uuid
         UUID clientUUID = UUID.fromString(clientID);
         UUID movieUUID = UUID.fromString(movieID);
 
-        return ResponseEntity.ok(watchedMoviesService.getRentedMovieForClient(clientUUID, movieUUID).orElse(null));
+        return ResponseEntity.ok(
+                watchedMoviesService.getRentedMovieForClient(clientUUID, movieUUID)
+                        .map(RentedMovieResponseModel::fromDTO)
+                        .orElse(null)
+        );
     }
 
     @PostMapping
     public ResponseEntity<Void> addRentedMovieToClient(@PathVariable String clientID,
-                                                       @Valid @RequestBody WatchedMoviesController.AddRentedMovieRequestBody requestBody) {
+                                                       @Valid @RequestBody WatchedMoviesController.RentedMovieRequestModel requestBody) {
         log.debug("add rented movie with id [{}], for clientID [{}]", requestBody.movieID(), clientID);
 
         UUID clientUUID = UUID.fromString(clientID);
@@ -55,7 +64,15 @@ public class WatchedMoviesController {
         return ResponseEntity.ok().build();
     }
 
-    record AddRentedMovieRequestBody(@NotNull UUID movieID, @Positive int timesRented,
-                                     @NotNull @JsonFormat(pattern = "dd-MM-yyyy HH:mm") Date dateRented) {
+    record RentedMovieRequestModel(@NotNull UUID movieID, @Positive int timesRented,
+                                   @NotNull @JsonFormat(pattern = "dd-MM-yyyy HH:mm") Date dateRented) {
+    }
+
+    record RentedMovieResponseModel(@NotNull UUID clientID, @NotNull UUID movieID, @Positive int timesRented,
+                                    @NotNull @JsonFormat(pattern = "dd-MM-yyyy HH:mm") Date dateRented) {
+        static RentedMovieResponseModel fromDTO(RentedMovieDTO rentedMovieDTO) {
+            return new RentedMovieResponseModel(rentedMovieDTO.clientID(), rentedMovieDTO.movieID(), rentedMovieDTO.timesRented(),
+                    rentedMovieDTO.dateRented());
+        }
     }
 }
