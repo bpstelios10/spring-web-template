@@ -29,6 +29,16 @@ dependencies {
     implementation 'io.prometheus:simpleclient_hotspot:0.16.0'
 
     testImplementation "org.springframework.boot:spring-boot-starter-test:${versions.springBoot}"
+//    NEXT LINES ARE FOR DOCKER JAVA CLIENT, EXCLUDING VULNERABILITIES AND REDUNDANT DEPENDENCIES
+    testImplementation('com.github.docker-java:docker-java:3.3.6') {
+        exclude group: 'com.github.docker-java', module: 'docker-java-transport-jersey'
+        exclude group: 'com.github.docker-java', module: 'docker-java-transport-netty'
+        exclude group: 'com.google.guava', module: 'guava'
+        exclude group: 'org.apache.commons:', module: 'commons-compress'
+    }
+    testImplementation 'com.github.docker-java:docker-java-transport-httpclient5:3.3.6'
+    testImplementation 'com.google.guava:guava:33.1.0-jre'
+    testImplementation 'org.apache.commons:commons-compress:1.26.1'
 
     test.useJUnitPlatform()
 }
