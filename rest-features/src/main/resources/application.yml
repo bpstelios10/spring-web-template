@@ -33,6 +33,6 @@ spring:
       username: 'cassandra'
       password: 'cassandra'
       datacenter: 'datacenter1'
-      keyspace: 'test_keyspace'
-      schema-action: RECREATE_DROP_UNUSED
+      keyspace: 'test_cassandra'
+      schema-action: NONE
       enable-ssl-encryption: false
