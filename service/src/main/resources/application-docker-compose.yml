@@ -11,4 +11,3 @@ spring:
       password: 'cassandra'
       keyspace: 'test_cassandra'
       schema-action: NONE
-      enable-ssl-encryption: false
