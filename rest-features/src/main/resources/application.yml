@@ -35,4 +35,3 @@ spring:
       datacenter: 'datacenter1'
       keyspace: 'test_cassandra'
       schema-action: NONE
-      enable-ssl-encryption: false
