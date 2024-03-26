@@ -2,6 +2,7 @@ package org.learnings.application_name.infrastructure.web.controller;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
 import lombok.extern.slf4j.Slf4j;
@@ -28,47 +29,56 @@ public class WatchedMoviesController {
     @GetMapping
     public ResponseEntity<List<RentedMovieResponseModel>> getAllRentedMoviesOfClient(@PathVariable String clientID) {
         log.debug("requested all rented movies for clientID [{}]", clientID);
-        UUID clientUUID = UUID.fromString(clientID);
 
-        return ResponseEntity.ok(
+        UUID clientUUID = getUUID(clientID);
+        List<RentedMovieResponseModel> allRentedMoviesOfClient =
                 watchedMoviesService.getAllRentedMoviesOfClient(clientUUID)
                         .stream()
                         .map(RentedMovieResponseModel::fromDTO)
-                        .toList()
-        );
+                        .toList();
+
+        return ResponseEntity.ok(allRentedMoviesOfClient);
     }
 
     @GetMapping("/{movieID}")
     public ResponseEntity<RentedMovieResponseModel> getRentedMovieForClient(@PathVariable String clientID, @PathVariable String movieID) {
         log.debug("requested movie with id [{}], for client with id [{}]", movieID, clientID);
-        //add check to validate movieID is uuid
-        UUID clientUUID = UUID.fromString(clientID);
-        UUID movieUUID = UUID.fromString(movieID);
 
-        return ResponseEntity.ok(
+        UUID clientUUID = getUUID(clientID);
+        UUID movieUUID = getUUID(movieID);
+        RentedMovieResponseModel rentedMovieForClient =
                 watchedMoviesService.getRentedMovieForClient(clientUUID, movieUUID)
                         .map(RentedMovieResponseModel::fromDTO)
-                        .orElse(null)
-        );
+                        .orElse(null);
+
+        return ResponseEntity.ok(rentedMovieForClient);
     }
 
     @PostMapping
-    public ResponseEntity<Void> addRentedMovieToClient(@PathVariable String clientID,
-                                                       @Valid @RequestBody WatchedMoviesController.RentedMovieRequestModel requestBody) {
+    public ResponseEntity<Void> addRentedMovieToClient(@PathVariable String clientID, @Valid @RequestBody RentedMovieRequestModel requestBody) {
         log.debug("add rented movie with id [{}], for clientID [{}]", requestBody.movieID(), clientID);
 
-        UUID clientUUID = UUID.fromString(clientID);
-        RentedMovieDTO rentedMovie = new RentedMovieDTO(clientUUID, requestBody.movieID(), requestBody.timesRented(), requestBody.dateRented());
-        watchedMoviesService.addRentedMovieToClient(rentedMovie);
+        UUID clientUUID = getUUID(clientID);
+        UUID movieUUID = getUUID(requestBody.movieID());
+        watchedMoviesService.addRentedMovieToClient(clientUUID, movieUUID);
 
         return ResponseEntity.ok().build();
     }
 
-    record RentedMovieRequestModel(@NotNull UUID movieID, @Positive int timesRented,
-                                   @NotNull @JsonFormat(pattern = "dd-MM-yyyy HH:mm") Date dateRented) {
+    private UUID getUUID(String stringUUID) {
+        try {
+            return UUID.fromString(stringUUID);
+        } catch (IllegalArgumentException e) {
+            throw new InvalidUUIDException(stringUUID);
+        }
     }
 
-    record RentedMovieResponseModel(@NotNull UUID clientID, @NotNull UUID movieID, @Positive int timesRented,
+    record RentedMovieRequestModel(@NotBlank String movieID) {
+    }
+
+    record RentedMovieResponseModel(@NotNull UUID clientID,
+                                    @NotNull UUID movieID,
+                                    @Positive int timesRented,
                                     @NotNull @JsonFormat(pattern = "dd-MM-yyyy HH:mm") Date dateRented) {
         static RentedMovieResponseModel fromDTO(RentedMovieDTO rentedMovieDTO) {
             return new RentedMovieResponseModel(rentedMovieDTO.clientID(), rentedMovieDTO.movieID(), rentedMovieDTO.timesRented(),

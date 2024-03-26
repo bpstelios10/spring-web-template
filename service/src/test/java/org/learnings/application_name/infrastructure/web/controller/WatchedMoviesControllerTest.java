@@ -89,11 +89,9 @@ class WatchedMoviesControllerTest {
 
     @Test
     void addRentedMovieToClient() {
-        RentedMovieDTO expectedRentedMovie = new RentedMovieDTO(clientUUID, firstMovieUUID, 3,
-                Date.from(Instant.parse("2024-02-01T08:15:24.00Z")));
-        WatchedMoviesController.RentedMovieRequestModel requestBody = new WatchedMoviesController.RentedMovieRequestModel(
-                expectedRentedMovie.movieID(), expectedRentedMovie.timesRented(), expectedRentedMovie.dateRented());
-        doNothing().when(service).addRentedMovieToClient(expectedRentedMovie);
+        doNothing().when(service).addRentedMovieToClient(clientUUID, firstMovieUUID);
+        WatchedMoviesController.RentedMovieRequestModel requestBody =
+                new WatchedMoviesController.RentedMovieRequestModel(firstMovieUUID.toString());
 
         ResponseEntity<Void> response = controller.addRentedMovieToClient(clientUUID.toString(), requestBody);
 

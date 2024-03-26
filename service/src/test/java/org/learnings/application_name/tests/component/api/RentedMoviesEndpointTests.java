@@ -1,10 +1,11 @@
 package org.learnings.application_name.tests.component.api;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.Arguments;
-import org.junit.jupiter.params.provider.MethodSource;
+import org.junit.jupiter.params.provider.NullAndEmptySource;
+import org.junit.jupiter.params.provider.ValueSource;
 import org.learnings.application_name.infrastructure.repositories.RentedMoviesEntity;
 import org.learnings.application_name.infrastructure.repositories.RentedMoviesEntityKey;
 import org.learnings.application_name.infrastructure.repositories.RentedMoviesRepository;
@@ -24,7 +25,6 @@ import java.time.Instant;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
-import java.util.stream.Stream;
 
 import static org.hamcrest.Matchers.*;
 import static org.mockito.Mockito.when;
@@ -48,6 +48,8 @@ public class RentedMoviesEndpointTests {
 
     private static final UUID clientUUID = UUID.randomUUID();
     private static final UUID firstMovieUUID = UUID.fromString("f9734631-6833-4885-93c5-dd41679fc908");
+
+    private final ObjectMapper objectMapper = new ObjectMapper();
 
     private final List<IRentedMoviesEntity> dataSource = List.of(
             new RentedMoviesEntity(new RentedMoviesEntityKey(clientUUID, firstMovieUUID),
@@ -87,38 +89,67 @@ public class RentedMoviesEndpointTests {
 
     @Test
     void addRentedMovieToClient() throws Exception {
-        when(repository.findByRentedMoviesEntityKeyClientIDAndRentedMoviesEntityKeyMovieID(clientUUID, firstMovieUUID)).thenReturn(Optional.empty());
+        when(repository.findByRentedMoviesEntityKeyClientIDAndRentedMoviesEntityKeyMovieID(clientUUID, firstMovieUUID))
+                .thenReturn(Optional.empty());
         when(repository.save(dataSource.get(0))).thenReturn(dataSource.get(0));
+        RentedMovieRequestModel requestBody = new RentedMovieRequestModel(firstMovieUUID.toString());
 
         mockMvc.perform(post("/account/" + clientUUID + "/watchlist/movies")
                 .contentType(MediaType.APPLICATION_JSON)
-                .content("{\"movieID\":\"" + firstMovieUUID + "\",\"timesRented\":3,\"dateRented\":\"01-02-2024 08:15\"}")
+                .content(objectMapper.writeValueAsString(requestBody))
         ).andExpect(status().isOk()).andExpect(content().string(blankOrNullString()));
     }
 
     @ParameterizedTest(name = "Input {index}: {0}")
-    @MethodSource("provideInvalidValuesForMessageBody")
+    @NullAndEmptySource
+    @ValueSource(strings = {"  ", "\t", "\n"})
     void addRentedMovie_shouldFail_forInvalidValues(String content) throws Exception {
-        when(repository.findByRentedMoviesEntityKeyClientIDAndRentedMoviesEntityKeyMovieID(clientUUID, firstMovieUUID)).thenReturn(Optional.empty());
-        when(repository.save(dataSource.get(0))).thenReturn(dataSource.get(0));
+        RentedMovieRequestModel requestBody = new RentedMovieRequestModel(content);
 
         mockMvc.perform(post("/account/" + clientUUID + "/watchlist/movies")
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(content)
+                .content(objectMapper.writeValueAsString(requestBody))
         ).andExpect(status().isBadRequest());
     }
 
-    private static Stream<Arguments> provideInvalidValuesForMessageBody() {
-        UUID UUID1 = UUID.randomUUID();
-        return Stream.of(
-                // null values
-                Arguments.of("{\"timesRented\":3,\"dateRented\":\"01-02-2024 08:15\"}"),
-                Arguments.of("{\"movieID\":\"" + UUID1 + "\",\"dateRented\":\"01-02-2024 08:15\"}"),
-                Arguments.of("{\"movieID\":\"" + UUID1 + "\",\"timesRented\":3}"),
-                // non positive int
-                Arguments.of("{\"movieID\":\"" + UUID1 + "\",\"timesRented\":0,\"dateRented\":\"01-02-2024 08:15\"}"),
-                Arguments.of("{\"movieID\":\"" + UUID1 + "\",\"timesRented\":-1,\"dateRented\":\"01-02-2024 08:15\"}"),
-                Arguments.of("{\"movieID\":\"" + UUID1 + "\",\"timesRented\":9999999999,\"dateRented\":\"01-02-2024 08:15\"}")
-        );
+    @Test
+    void givenWrongClientUUIDFormat_whenGetAllRentedMoviesForClient_thenReturnBadRequest() throws Exception {
+        mockMvc.perform(get("/account/" + "12341234" + "/watchlist/movies"))
+                .andExpect(status().isBadRequest());
+    }
+
+    @Test
+    void givenWrongClientUUIDFormat_whenGetRentedMovieForClient_thenReturnBadRequest() throws Exception {
+        mockMvc.perform(get("/account/" + "123413" + "/watchlist/movies/f9734631-6833-4885-93c5-dd41679fc908"))
+                .andExpect(status().isBadRequest());
+    }
+
+    @Test
+    void givenWrongMovieUUIDFormat_whenGetRentedMovieForClient_thenReturnBadRequest() throws Exception {
+        mockMvc.perform(get("/account/" + clientUUID + "/watchlist/movies/234213412"))
+                .andExpect(status().isBadRequest());
+    }
+
+    @Test
+    void givenWrongClientUUIDFormat_whenAddRentedMovieToClient_thenReturnBadRequest() throws Exception {
+        RentedMovieRequestModel requestBody = new RentedMovieRequestModel(firstMovieUUID.toString());
+
+        mockMvc.perform(post("/account/12342314/watchlist/movies")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(requestBody))
+        ).andExpect(status().isBadRequest());
+    }
+
+    @Test
+    void givenWrongMovieUUIDFormat_whenAddRentedMovieToClient_thenReturnBadRequest() throws Exception {
+        RentedMovieRequestModel requestBody = new RentedMovieRequestModel("12342134");
+
+        mockMvc.perform(post("/account/" + clientUUID + "/watchlist/movies")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(requestBody))
+        ).andExpect(status().isBadRequest());
+    }
+
+    record RentedMovieRequestModel(String movieID) {
     }
 }

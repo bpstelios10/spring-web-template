@@ -6,10 +6,12 @@ services:
     ports:
       - "9042:9042"
     healthcheck:
-      test: cqlsh -k system
+      # for 18*10s -> 3 mins test if we can connect to app keyspace
+      # this is to keep the app waiting till cassandra is fully set up (service_healthy)
+      test: cqlsh -k test_cassandra
       interval: 5s
       timeout: 10s
-      retries: 15
+      retries: 18
 
   service:
     build: service
