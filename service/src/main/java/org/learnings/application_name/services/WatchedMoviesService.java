@@ -2,6 +2,8 @@ package org.learnings.application_name.services;
 
 import org.springframework.stereotype.Component;
 
+import java.time.Instant;
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -21,17 +23,16 @@ public class WatchedMoviesService {
         return repository.findByRentedMoviesEntityKeyClientID(clientUUID).stream().map(RentedMovieDTO::fromRentedMovieEntity).toList();
     }
 
-    public Optional<RentedMovieDTO> getRentedMovieForClient(UUID clientUUID, UUID movieID) {
-        return repository.findByRentedMoviesEntityKeyClientIDAndRentedMoviesEntityKeyMovieID(clientUUID, movieID).map(RentedMovieDTO::fromRentedMovieEntity);
+    public Optional<RentedMovieDTO> getRentedMovieForClient(UUID clientID, UUID movieID) {
+        return repository.findByRentedMoviesEntityKeyClientIDAndRentedMoviesEntityKeyMovieID(clientID, movieID).map(RentedMovieDTO::fromRentedMovieEntity);
     }
 
-    public void addRentedMovieToClient(RentedMovieDTO rentedMovieDTO) {
-        RentedMovieDTO toBeSaved;
-        if (repository.findByRentedMoviesEntityKeyClientIDAndRentedMoviesEntityKeyMovieID(rentedMovieDTO.clientID(), rentedMovieDTO.movieID()).isEmpty())
-            toBeSaved = rentedMovieDTO;
-        else
-            toBeSaved = new RentedMovieDTO(rentedMovieDTO.clientID(), rentedMovieDTO.movieID(),
-                    rentedMovieDTO.timesRented() + 1, rentedMovieDTO.dateRented());
+    public void addRentedMovieToClient(UUID clientID, UUID movieID) {
+        Optional<IRentedMoviesEntity> findMovieForClientByID =
+                repository.findByRentedMoviesEntityKeyClientIDAndRentedMoviesEntityKeyMovieID(clientID, movieID);
+        RentedMovieDTO toBeSaved = findMovieForClientByID
+                .map(iRentedMoviesEntity -> new RentedMovieDTO(clientID, movieID, iRentedMoviesEntity.getTimesRented() + 1, iRentedMoviesEntity.getDateRented()))
+                .orElseGet(() -> new RentedMovieDTO(clientID, movieID, 1, Date.from(Instant.now())));
 
         repository.save(rentedMovieEntityFactory.fromRentedMovieDTO(toBeSaved));
     }

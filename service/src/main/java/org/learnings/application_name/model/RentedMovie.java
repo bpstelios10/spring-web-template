@@ -4,11 +4,11 @@ import java.util.Date;
 import java.util.UUID;
 
 public interface RentedMovie {
-    public UUID clientID();
+    UUID clientID();
 
-    public UUID movieID();
+    UUID movieID();
 
-    public int timesRented();
+    int timesRented();
 
-    public Date dateRented();
+    Date dateRented();
 }

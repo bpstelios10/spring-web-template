@@ -4,13 +4,12 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.MockedConstruction;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.sql.Timestamp;
 import java.time.Instant;
-import java.util.List;
-import java.util.Optional;
-import java.util.UUID;
+import java.util.*;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.*;
@@ -73,24 +72,35 @@ class WatchedMoviesServiceTest {
 
     @Test
     void getAllRentedMoviesOfClient_whenRentedMovieNotExists() {
-        when(repository.findByRentedMoviesEntityKeyClientIDAndRentedMoviesEntityKeyMovieID(clientUUID, expectedRentedMovieDTO.movieID())).thenReturn(Optional.empty());
-        when(factory.fromRentedMovieDTO(expectedRentedMovieDTO)).thenReturn(expectedRentedMovie);
-        when(repository.save(expectedRentedMovie)).thenReturn(expectedRentedMovie);
+        Map<RentedMovieDTO, List<Object>> mockedConstructorArgs = new HashMap<>();
+        try (MockedConstruction<RentedMovieDTO> mockedConstructor = mockConstruction(RentedMovieDTO.class,
+                (mock, context) -> mockedConstructorArgs.put(mock, new ArrayList<>(context.arguments())))) {
+            when(repository.findByRentedMoviesEntityKeyClientIDAndRentedMoviesEntityKeyMovieID(clientUUID, expectedRentedMovieDTO.movieID()))
+                    .thenReturn(Optional.empty());
+            when(factory.fromRentedMovieDTO(any())).thenReturn(expectedRentedMovie);
+            when(repository.save(expectedRentedMovie)).thenReturn(expectedRentedMovie);
 
-        service.addRentedMovieToClient(expectedRentedMovieDTO);
+            service.addRentedMovieToClient(clientUUID, expectedRentedMovieDTO.movieID());
 
-        verifyNoMoreInteractions(repository, expectedRentedMovie);
+            assertThat(mockedConstructor.constructed()).hasSize(1);
+            // assert that the constructor called was the one with timesRented (third argument) is equal to 1
+            assertThat(mockedConstructorArgs.get(mockedConstructor.constructed().get(0)).get(2)).isEqualTo(1);
+            verifyNoMoreInteractions(repository, expectedRentedMovie);
+        }
     }
 
     @Test
     void getAllRentedMoviesOfClient_whenRentedMovieExists() {
-        when(repository.findByRentedMoviesEntityKeyClientIDAndRentedMoviesEntityKeyMovieID(clientUUID, expectedRentedMovieDTO.movieID())).thenReturn(Optional.of(expectedRentedMovie));
+        when(expectedRentedMovie.getTimesRented()).thenReturn(expectedRentedMovieDTO.timesRented());
+        when(expectedRentedMovie.getDateRented()).thenReturn(new Timestamp(expectedRentedMovieDTO.dateRented().getTime()));
+        when(repository.findByRentedMoviesEntityKeyClientIDAndRentedMoviesEntityKeyMovieID(clientUUID, expectedRentedMovieDTO.movieID()))
+                .thenReturn(Optional.of(expectedRentedMovie));
         RentedMovieDTO oneMoreTimeRented = new RentedMovieDTO(expectedRentedMovieDTO.clientID(), expectedRentedMovieDTO.movieID(),
                 expectedRentedMovieDTO.timesRented() + 1, expectedRentedMovieDTO.dateRented());
         when(factory.fromRentedMovieDTO(oneMoreTimeRented)).thenReturn(expectedRentedMovie);
         when(repository.save(expectedRentedMovie)).thenReturn(expectedRentedMovie);
 
-        service.addRentedMovieToClient(expectedRentedMovieDTO);
+        service.addRentedMovieToClient(clientUUID, expectedRentedMovieDTO.movieID());
 
         verifyNoMoreInteractions(repository);
     }
