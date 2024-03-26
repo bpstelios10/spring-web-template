@@ -17,4 +17,17 @@ public class PrivateController {
 
         return ResponseEntity.ok("OK");
     }
+//
+//    @GetMapping(path = "/readinessCustomCheck")
+//    public ResponseEntity<String> readinessCustomCheck() {
+//        log.info("checking readiness");
+//
+//        String getTime = "SELECT toTimestamp(now()) FROM system.local";
+//        DefaultRow one = cassandraTemplate.selectOne(getTime, DefaultRow.class);
+//
+//        if (one != null && one.getInstant(0) != null) log.info(String.valueOf(one.getInstant(0)));
+//        else log.info("'SELECT now() FROM system.local' didnt give a response back");
+//
+//        return ResponseEntity.ok("OK");
+//    }
 }
