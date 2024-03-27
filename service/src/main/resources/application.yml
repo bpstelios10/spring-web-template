@@ -3,7 +3,7 @@ management:
     port: 8081
   endpoints:
     web:
-      base-path: /application_name/private
+      base-path: /netflix/private
       exposure:
         include: prometheus,configprops,env,health,heapdump
       path-mapping:
@@ -15,10 +15,17 @@ management:
 
 server:
   servlet:
-    context-path: /application_name
+    context-path: /netflix
   tomcat:
     accept-count: 120
     mbeanregistry:
       enabled: true
     threads:
       max: 1200
+
+spring:
+  neo4j:
+    uri: 'bolt://localhost:7687'
+    authentication:
+      username: 'neo4j'
+      password: 'neo4jpass'

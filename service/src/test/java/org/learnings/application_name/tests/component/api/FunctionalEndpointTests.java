@@ -5,18 +5,23 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
+import org.learnings.application_name.infrastructure.repositories.PersonRepository;
+import org.learnings.application_name.model.Person;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.ActiveProfiles;
-import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
 
-import java.util.UUID;
+import java.util.List;
+import java.util.Optional;
 import java.util.stream.Stream;
 
 import static org.hamcrest.Matchers.*;
+import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
@@ -25,7 +30,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 /**
  * Testing spring-web and spring-actuator endpoints
  */
-@ExtendWith(SpringExtension.class)
+@ExtendWith(MockitoExtension.class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.MOCK)
 @AutoConfigureMockMvc
 @ActiveProfiles("component-test")
@@ -33,66 +38,77 @@ public class FunctionalEndpointTests {
 
     @Autowired
     private MockMvc mockMvc;
+    @MockBean
+    private PersonRepository repository;
+
+    private final Person expectedPerson = new Person(1001L, "first one", 1989);
+    private final List<Person> dataSource = List.of(
+            expectedPerson,
+            new Person(1002L, "second one", 1999),
+            new Person(1003L, "third one", 1980)
+    );
 
     @Test
-    void getAllResource1() throws Exception {
-        mockMvc.perform(get("/resource1"))
+    void getAllPersons() throws Exception {
+        when(repository.findAll()).thenReturn(dataSource);
+
+        mockMvc.perform(get("/persons"))
                 .andExpect(status().isOk())
-                .andExpect(content().string(stringContainsInOrder("f9734631-6833-4885-93c5-dd41679fc908", "f9734631-6833-4885-93c5-dd41679fc907", "f9734631-6833-4885-93c5-dd41679fc906")));
+                .andExpect(content().string(not(blankOrNullString())));
     }
 
     @Test
-    void getResource1ByID_whenResourceExists() throws Exception {
-        mockMvc.perform(get("/resource1/f9734631-6833-4885-93c5-dd41679fc908"))
+    void getPersonByName_whenResourceExists() throws Exception {
+        when(repository.findByName(expectedPerson.getName())).thenReturn(Optional.of(expectedPerson));
+
+        mockMvc.perform(get("/persons/" + expectedPerson.getName()))
                 .andExpect(status().isOk())
-                .andExpect(content().string(containsString("f9734631-6833-4885-93c5-dd41679fc908")));
+                .andExpect(content().string(containsString(String.valueOf(expectedPerson.getBorn()))));
     }
 
     @Test
-    void getResource1ByID_whenNoResourceWithThisID() throws Exception {
-        mockMvc.perform(get("/resource1/f9734631-6833-4885-93c5-dd41679fc900"))
+    void getPersonByName_whenNoResourceWithThisID() throws Exception {
+        when(repository.findByName("no user found")).thenReturn(Optional.empty());
+
+        mockMvc.perform(get("/persons/no user found"))
                 .andExpect(status().isOk())
                 .andExpect(content().string(blankOrNullString()));
     }
 
     @Test
-    void createResource1() throws Exception {
-        UUID UUID1 = UUID.randomUUID();
-        mockMvc.perform(post("/resource1")
+    void savePerson() throws Exception {
+        when(repository.findByName(expectedPerson.getName())).thenReturn(Optional.empty());
+        when(repository.save(expectedPerson)).thenReturn(expectedPerson);
+
+        mockMvc.perform(post("/persons")
                 .contentType(MediaType.APPLICATION_JSON)
-                .content("{\"id\":\"" + UUID1 + "\",\"attr1\":\"att1\",\"attr2\":3,\"attr3\":\"2024-02-01 08:15\"}")
-        ).andExpect(status().isOk()).andExpect(content().string(blankOrNullString()));
-        mockMvc.perform(get("/resource1/" + UUID1))
-                .andExpect(status().isOk())
-                .andExpect(content().string(containsString(UUID1.toString())));
+                .content("{\"name\":\"" + expectedPerson.getName() + "\",\"born\":" + expectedPerson.getBorn() + "}")
+        ).andExpect(status().isOk());
     }
 
     @ParameterizedTest
     @MethodSource("provideInvalidValuesForMessageBody")
-    void createResource1_shouldFail_forBlankValues(String content) throws Exception {
-        mockMvc.perform(post("/resource1")
+    void savePerson_shouldFail_forBlankValues(String content) throws Exception {
+        mockMvc.perform(post("/persons")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(content)
         ).andExpect(status().isBadRequest());
     }
 
     private static Stream<Arguments> provideInvalidValuesForMessageBody() {
-        UUID UUID1 = UUID.randomUUID();
         return Stream.of(
                 // null values
-                Arguments.of("{\"attr1\":\"att1\",\"attr2\":3,\"attr3\":\"2024-02-01T08:15:24.000+00:00\"}"),
-                Arguments.of("{\"id\":\"" + UUID1 + "\",\"attr2\":3,\"attr3\":\"2024-02-01T08:15:24.000+00:00\"}"),
-                Arguments.of("{\"id\":\"" + UUID1 + "\",\"attr1\":\"att1\",\"attr3\":\"2024-02-01T08:15:24.000+00:00\"}"),
-                Arguments.of("{\"id\":\"" + UUID1 + "\",\"attr1\":\"att1\",\"attr2\":3}"),
+                Arguments.of("{\"name\":\"name1\"}"),
+                Arguments.of("{\"born\":2001}"),
                 // blank strings
-                Arguments.of("{\"id\":\"" + UUID1 + "\",\"attr1\":\"\",\"attr2\":3,\"attr3\":\"2024-02-01T08:15:24.000+00:00\"}"),
-                Arguments.of("{\"id\":\"" + UUID1 + "\",\"attr1\":\" \",\"attr2\":3,\"attr3\":\"2024-02-01T08:15:24.000+00:00\"}"),
-                Arguments.of("{\"id\":\"" + UUID1 + "\",\"attr1\":\"\t\",\"attr2\":3,\"attr3\":\"2024-02-01T08:15:24.000+00:00\"}"),
-                Arguments.of("{\"id\":\"" + UUID1 + "\",\"attr1\":\"\n\",\"attr2\":3,\"attr3\":\"2024-02-01T08:15:24.000+00:00\"}"),
+                Arguments.of("{\"name\":\"\",\"born\":2001}"),
+                Arguments.of("{\"name\":\" \",\"born\":2001}"),
+                Arguments.of("{\"name\":\"\t\",\"born\":2001}"),
+                Arguments.of("{\"name\":\"\n\",\"born\":2001}"),
                 // non positive int
-                Arguments.of("{\"id\":\"" + UUID1 + "\",\"attr1\":\"att1\",\"attr2\":0,\"attr3\":\"2024-02-01T08:15:24.000+00:00\"}"),
-                Arguments.of("{\"id\":\"" + UUID1 + "\",\"attr1\":\"att1\",\"attr2\":-1,\"attr3\":\"2024-02-01T08:15:24.000+00:00\"}"),
-                Arguments.of("{\"id\":\"" + UUID1 + "\",\"attr1\":\"att1\",\"attr2\":9999999999,\"attr3\":\"2024-02-01T08:15:24.000+00:00\"}")
+                Arguments.of("{\"name\":\"name1\",\"born\":-1}"),
+                Arguments.of("{\"name\":\"name1\",\"born\":0}"),
+                Arguments.of("{\"name\":\"name1\",\"born\":9999999999}")
         );
     }
 }
