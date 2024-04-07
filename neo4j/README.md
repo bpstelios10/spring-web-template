@@ -56,4 +56,10 @@ MATCH (a:Person)-[:WATCHED]->(m:Movie) RETURN a,m LIMIT 10;
 MATCH (a:Person)-[rel:WATCHED]->(m:Movie) WHERE rel.rating > 0 RETURN a,m LIMIT 10;
 MATCH (audience3:Person {name:'Kevin Pollak'})-[:WATCHED]->(m:Movie) RETURN audience3, m;
 MATCH (a:Person)-[rel:WATCHED]->(m:Movie) WHERE rel.rating>0 RETURN a,m;
+
+// recommendation queries:
+// find movies that other users have watched (matrix) and rated the same as the one you just rated by user (client2)
+MATCH (client:Person {name:'client2'})-[r:WATCHED]->(movie:Movie {title:'The Matrix'})
+WITH r.rating as rating1, client
+MATCH (rec:Movie)<-[:WATCHED {rating:(rating1)}]-(a:Person)-[:WATCHED {rating:(rating1)}]->(m:Movie {title:'The Matrix'}) WHERE a<>client RETURN rec;
 ```

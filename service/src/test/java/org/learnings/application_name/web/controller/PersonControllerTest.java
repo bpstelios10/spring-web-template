@@ -26,16 +26,16 @@ class PersonControllerTest {
     private PersonController controller;
 
     private final List<Person> dataSource = List.of(
-            new Person(1001L, "first one", 1989),
-            new Person(1002L, "second one", 1999),
-            new Person(1003L, "third one", 1980)
+            new Person(1001L, "first one", 1989, null),
+            new Person(1002L, "second one", 1999, null),
+            new Person(1003L, "third one", 1980, null)
     );
 
     @Test
     void getAllPersons_whenPersonsExist() {
         when(service.getAllPersons()).thenReturn(dataSource);
         PersonController.PersonResponseModel expectedPerson =
-                new PersonController.PersonResponseModel(1001L, "first one", 1989);
+                new PersonController.PersonResponseModel(1001L, "first one", 1989, null);
 
         ResponseEntity<List<PersonController.PersonResponseModel>> allPerson = controller.getAllPersons();
 
@@ -57,8 +57,8 @@ class PersonControllerTest {
     @Test
     void getPersonByID_whenPersonExists() {
         PersonController.PersonResponseModel expectedResponseModel =
-                new PersonController.PersonResponseModel(1001L, "first one", 1989);
-        Person expectedPerson = new Person(1001L, "first one", 1989);
+                new PersonController.PersonResponseModel(1001L, "first one", 1989, null);
+        Person expectedPerson = new Person(1001L, "first one", 1989, null);
         when(service.getPersonByName("first one")).thenReturn(Optional.of(expectedPerson));
 
         ResponseEntity<PersonController.PersonResponseModel> allPerson = controller.getPersonByName("first one");
@@ -78,7 +78,7 @@ class PersonControllerTest {
 
     @Test
     void createPerson() {
-        Person newPerson = new Person(null, "forth one", 2001);
+        Person newPerson = new Person(null, "forth one", 2001, null);
         PersonController.PersonRequestModel requestBody =
                 new PersonController.PersonRequestModel(newPerson.getName(), newPerson.getBorn());
         doNothing().when(service).createPerson(newPerson);

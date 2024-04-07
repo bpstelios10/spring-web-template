@@ -8,7 +8,7 @@
     </appender>
 
     <springProfile name="default">
-        <logger name="org.learnings" additivity="false" level="INFO" >
+        <logger name="org.learnings" additivity="false" level="DEBUG" >
             <appender-ref ref="STDOUT"/>
         </logger>
     </springProfile>

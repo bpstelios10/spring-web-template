@@ -41,11 +41,11 @@ public class FunctionalEndpointTests {
     @MockBean
     private PersonRepository repository;
 
-    private final Person expectedPerson = new Person(1001L, "first one", 1989);
+    private final Person expectedPerson = new Person(1001L, "first one", 1989, null);
     private final List<Person> dataSource = List.of(
             expectedPerson,
-            new Person(1002L, "second one", 1999),
-            new Person(1003L, "third one", 1980)
+            new Person(1002L, "second one", 1999, null),
+            new Person(1003L, "third one", 1980, null)
     );
 
     @Test

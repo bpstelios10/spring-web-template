@@ -20,7 +20,16 @@ public class PersonService {
     }
 
     public Optional<Person> getPersonByName(String name) {
+
         return repository.findByName(name);
+    }
+
+    public List<String> getPersonMoviesWatchedByName(String name) {
+        return repository.findWatchedMoviesByName(name).getMoviesWatched();
+    }
+
+    public Map<String, Short> getPersonMoviesWatchedByNameWithRatings(String name) {
+        return repository.findWatchedMoviesByName(name).getMoviesAndRatingsWatched();
     }
 
     public void createPerson(Person person) {
