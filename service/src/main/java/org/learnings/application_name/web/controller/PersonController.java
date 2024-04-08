@@ -30,37 +30,33 @@ public class PersonController {
     public ResponseEntity<List<PersonResponseModel>> getAllPersons() {
         log.debug("requested all person");
 
-        return ResponseEntity.ok(
-                personService.getAllPersons()
-                        .stream()
-                        .map(PersonResponseModel::fromDomainObject)
-                        .toList());
+        return ResponseEntity.ok(personService.getAllPersons()
+                .stream()
+                .map(PersonResponseModel::fromDomainObject)
+                .toList());
     }
 
     @GetMapping("/{name}")
     public ResponseEntity<PersonResponseModel> getPersonByName(@PathVariable @NotBlank String name) {
         log.debug("requested person with name: [{}]", name);
 
-        return ResponseEntity.ok(
-                personService.getPersonByName(name)
-                        .map(PersonResponseModel::fromDomainObject)
-                        .orElse(null));
+        return ResponseEntity.ok(personService.getPersonByName(name)
+                .map(PersonResponseModel::fromDomainObject)
+                .orElse(null));
     }
 
     @GetMapping("/{name}/movies/watched")
     public ResponseEntity<List<String>> getPersonMoviesWatchedByName(@PathVariable @NotBlank String name) {
         log.debug("requested person with name: [{}]", name);
 
-        return ResponseEntity.ok(
-                personService.getPersonMoviesWatchedByName(name));
+        return ResponseEntity.ok(personService.getPersonMoviesWatchedByName(name));
     }
 
     @GetMapping("/{name}/movies/watched/ratings")
     public ResponseEntity<Map<String, Short>> getPersonMoviesWatchedByNameWithRatings(@PathVariable @NotBlank String name) {
         log.debug("requested person with name: [{}]", name);
 
-        return ResponseEntity.ok(
-                personService.getPersonMoviesWatchedByNameWithRatings(name));
+        return ResponseEntity.ok(personService.getPersonMoviesWatchedByNameWithRatings(name));
     }
 
     @PostMapping
@@ -78,8 +74,11 @@ public class PersonController {
 
     record PersonResponseModel(@NotNull Long id, @NotBlank String name, int born, List<String> moviesWatched) {
         static PersonResponseModel fromDomainObject(Person person) {
-            return new PersonResponseModel(person.getId(), person.getName(), person.getBorn(),
-                    person.getMoviesWatched().stream().map(WatchedRelationship::getMovie).map(Movie::getTitle).toList());
+            return new PersonResponseModel(person.getId(), person.getName(), person.getBorn(), person.getMoviesWatched()
+                    .stream()
+                    .map(WatchedRelationship::getMovie)
+                    .map(Movie::getTitle)
+                    .toList());
         }
     }
 }

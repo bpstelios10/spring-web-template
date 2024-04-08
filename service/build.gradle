@@ -29,11 +29,16 @@ dependencies {
     implementation 'io.prometheus:simpleclient_hotspot:0.16.0'
 
     testImplementation("org.springframework.boot:spring-boot-starter-test:${versions.springBoot}")
-//    testImplementation('org.neo4j.test:neo4j-harness:5.18.1') {
-//        exclude group: 'org.neo4j', module: 'neo4j-slf4j-provider'
-//    }
+    testImplementation('org.neo4j.test:neo4j-harness:5.18.1') {
+        exclude group: 'org.neo4j', module: 'neo4j-slf4j-provider'
+    }
+}
 
-    test.useJUnitPlatform()
+test {
+    useJUnitPlatform()
+
+    minHeapSize = "512m"
+    maxHeapSize = "1G" //needed when using neo4j-harness
 }
 
 jar.enabled=false

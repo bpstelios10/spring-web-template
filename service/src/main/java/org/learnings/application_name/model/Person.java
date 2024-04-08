@@ -22,12 +22,16 @@ public class Person {
     private Long id;
     private String name;
     private int born;
-
-    public Person(String name, int born) {
-        this.name = name;
-        this.born = born;
-    }
-
     @Relationship(type = "WATCHED")
     private Set<WatchedRelationship> moviesWatched = new HashSet<>();
+
+    public Person(String name, int born) {
+        this(name, born, new HashSet<>());
+    }
+
+    public Person(String name, int born, Set<WatchedRelationship> moviesWatched) {
+        this.name = name;
+        this.born = born;
+        this.moviesWatched = moviesWatched;
+    }
 }

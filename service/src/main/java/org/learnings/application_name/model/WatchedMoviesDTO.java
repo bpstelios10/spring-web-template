@@ -6,7 +6,7 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 public class WatchedMoviesDTO {
-    private Set<WatchedRelationship> moviesWatched;
+    private final Set<WatchedRelationship> moviesWatched;
 
     public WatchedMoviesDTO(Set<WatchedRelationship> moviesWatched) {
         this.moviesWatched = moviesWatched;
