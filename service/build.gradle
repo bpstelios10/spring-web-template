@@ -31,11 +31,13 @@ dependencies {
     testImplementation("org.springframework.boot:spring-boot-starter-test:${versions.springBoot}")
     testImplementation('org.neo4j.test:neo4j-harness:5.18.1') {
         exclude group: 'org.neo4j', module: 'neo4j-slf4j-provider'
+        exclude group: 'commons-logging'
     }
 }
 
 test {
     useJUnitPlatform()
+//    testLogging.showStandardStreams = true
 
     minHeapSize = "512m"
     maxHeapSize = "1G" //needed when using neo4j-harness
