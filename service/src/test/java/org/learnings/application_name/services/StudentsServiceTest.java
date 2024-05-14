@@ -2,7 +2,7 @@ package org.learnings.application_name.services;
 
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.learnings.application_name.repositories.StudentsEntity;
+import org.learnings.application_name.repositories.StudentEntity;
 import org.learnings.application_name.repositories.StudentsRepository;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
@@ -79,7 +79,7 @@ class StudentsServiceTest {
 
     @Test
     void createStudent_whenStudentNotExists() {
-        StudentsEntity expectedStudentEntity = mapDTOToEntity(expectedStudent);
+        StudentEntity expectedStudentEntity = mapDTOToEntity(expectedStudent);
         when(repository.findById(expectedStudent.id())).thenReturn(Optional.empty());
         when(repository.save(expectedStudentEntity)).thenReturn(expectedStudentEntity);
 
@@ -90,7 +90,7 @@ class StudentsServiceTest {
 
     @Test
     void createStudent_whenStudentExists() {
-        StudentsEntity expectedStudentEntity = mapDTOToEntity(expectedStudent);
+        StudentEntity expectedStudentEntity = mapDTOToEntity(expectedStudent);
         when(repository.findById(expectedStudent.id())).thenReturn(Optional.of(expectedStudentEntity));
 
         service.createStudent(expectedStudent);
@@ -110,7 +110,7 @@ class StudentsServiceTest {
 
     @Test
     void searchStudentByName_whenStudentExists() {
-        StudentsEntity expectedStudentEntity = mapDTOToEntity(expectedStudent);
+        StudentEntity expectedStudentEntity = mapDTOToEntity(expectedStudent);
         when(repository.findByFullName(expectedStudent.fullName())).thenReturn(List.of(expectedStudentEntity));
 
         List<StudentDTO> responseStudent = service.searchStudentByName("fullName1");

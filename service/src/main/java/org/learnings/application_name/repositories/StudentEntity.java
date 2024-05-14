@@ -17,7 +17,7 @@ import java.util.UUID;
 @NoArgsConstructor
 @AllArgsConstructor
 @EqualsAndHashCode
-public class StudentsEntity {
+public class StudentEntity {
     @Id
     private UUID id;
     private String fullName;

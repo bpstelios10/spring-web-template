@@ -8,8 +8,8 @@ import java.util.List;
 import java.util.UUID;
 
 @Repository
-public interface StudentsRepository extends JpaRepository<StudentsEntity, UUID> {
+public interface StudentsRepository extends JpaRepository<StudentEntity, UUID> {
 
-    @Query("SELECT s FROM StudentsEntity s WHERE s.fullName LIKE %:name%")
-    List<StudentsEntity> findByFullName(String name);
+    @Query("SELECT s FROM StudentEntity s WHERE s.fullName LIKE %:name%")
+    List<StudentEntity> findByFullName(String name);
 }
