@@ -1,11 +1,11 @@
 buildscript {
     repositories {
-        maven { url 'https://repo.spring.io/snapshot' }
-        maven { url 'https://repo.spring.io/libs-milestone' }
+        maven { url = 'https://repo.spring.io/snapshot' }
+        maven { url = 'https://repo.spring.io/libs-milestone' }
         gradlePluginPortal()
     }
     dependencies {
-        classpath 'org.springframework.boot:spring-boot-gradle-plugin:3.2.3'
+        classpath "org.springframework.boot:spring-boot-gradle-plugin:${versions.springBoot}"
     }
 }
 
@@ -13,7 +13,7 @@ apply plugin: 'org.springframework.boot'
 
 repositories {
     mavenCentral()
-    maven { url 'https://repo.spring.io/snapshot' }
+    maven { url = 'https://repo.spring.io/snapshot' }
 }
 
 dependencies {
@@ -24,7 +24,7 @@ dependencies {
     compileOnly 'org.projectlombok:lombok:1.18.30'
     annotationProcessor 'org.projectlombok:lombok:1.18.30'
 
-    implementation 'io.micrometer:micrometer-registry-prometheus:1.12.2'
+    implementation 'io.micrometer:micrometer-registry-prometheus:1.15.7'
     implementation 'io.prometheus:simpleclient_hotspot:0.16.0'
 
     testImplementation("org.springframework.boot:spring-boot-starter-test:${versions.springBoot}")

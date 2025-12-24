@@ -47,7 +47,7 @@ public class PrivateEndpointTests {
 
         mockMvc.perform(get("/application_name/private/metrics"))
                 .andExpect(status().isOk())
-                .andExpect(content().string(containsString("http_server_requests_seconds_count{error=\"none\",exception=\"none\",method=\"GET\",outcome=\"SUCCESS\",status=\"200\",uri=\"/private/status\",} ")));
+                .andExpect(content().string(containsString("http_server_requests_seconds_count{error=\"none\",exception=\"none\",method=\"GET\",outcome=\"SUCCESS\",status=\"200\",uri=\"/private/status\"} ")));
     }
 
     @Test

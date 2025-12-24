@@ -12,6 +12,8 @@ management:
     health:
       probes:
         enabled: true
+    heapdump:
+      enabled: true
 
 server:
   servlet:
