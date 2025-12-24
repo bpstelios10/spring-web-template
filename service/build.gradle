@@ -21,13 +21,13 @@ dependencies {
     implementation "org.springframework.boot:spring-boot-starter-actuator:${versions.springBoot}"
     implementation "org.springframework.boot:spring-boot-starter-validation:${versions.springBoot}"
 
-    compileOnly 'org.projectlombok:lombok:1.18.30'
-    annotationProcessor 'org.projectlombok:lombok:1.18.30'
+    compileOnly 'org.projectlombok:lombok:1.18.42'
+    annotationProcessor 'org.projectlombok:lombok:1.18.42'
 
-    implementation 'io.micrometer:micrometer-registry-prometheus:1.15.7'
+    implementation 'io.micrometer:micrometer-registry-prometheus:1.16.1'
     implementation 'io.prometheus:simpleclient_hotspot:0.16.0'
 
-    testImplementation("org.springframework.boot:spring-boot-starter-test:${versions.springBoot}")
+    testImplementation("org.springframework.boot:spring-boot-starter-webmvc-test:${versions.springBoot}")
 
     test.useJUnitPlatform()
 }
