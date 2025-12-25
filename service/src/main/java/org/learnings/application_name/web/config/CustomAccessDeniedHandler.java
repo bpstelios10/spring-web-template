@@ -21,6 +21,6 @@ public class CustomAccessDeniedHandler implements AccessDeniedHandler {
         log.error("Custom handling CustomAccessDeniedHandler. This should happen when given right credentials for wrong role?");
 
         response.setHeader("WWW-Authenticate", "Basic realm=\"" + realmName + "\"");
-        response.sendError(HttpServletResponse.SC_UNAUTHORIZED, accessDeniedException.getMessage());
+        response.sendError(HttpServletResponse.SC_FORBIDDEN, accessDeniedException.getMessage());
     }
 }

@@ -26,7 +26,7 @@ class CustomAccessDeniedHandlerTest {
     @Test
     void handle() throws IOException {
         doNothing().when(response).setHeader("WWW-Authenticate", "Basic realm=\"application_name\"");
-        doNothing().when(response).sendError(HttpServletResponse.SC_UNAUTHORIZED, accessDeniedException.getMessage());
+        doNothing().when(response).sendError(HttpServletResponse.SC_FORBIDDEN, accessDeniedException.getMessage());
 
         handler.handle(request, response, accessDeniedException);
 

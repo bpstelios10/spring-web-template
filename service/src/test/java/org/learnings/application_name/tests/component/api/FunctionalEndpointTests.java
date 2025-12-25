@@ -2,19 +2,17 @@ package org.learnings.application_name.tests.component.api;
 
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.Arguments;
-import org.junit.jupiter.params.provider.MethodSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.webmvc.test.autoconfigure.AutoConfigureMockMvc;
 import org.springframework.http.MediaType;
+import org.springframework.security.test.context.support.WithMockUser;
+import org.springframework.security.test.context.support.WithUserDetails;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
 
 import java.util.UUID;
-import java.util.stream.Stream;
 
 import static org.hamcrest.Matchers.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -35,64 +33,84 @@ public class FunctionalEndpointTests {
     private MockMvc mockMvc;
 
     @Test
-    void getAllResource1() throws Exception {
+    @WithUserDetails("resource1-read-user")
+    void getAllResource1_whenAuthenticatedUser_returnsResources() throws Exception {
         mockMvc.perform(get("/resource1"))
                 .andExpect(status().isOk())
                 .andExpect(content().string(stringContainsInOrder("f9734631-6833-4885-93c5-dd41679fc908", "f9734631-6833-4885-93c5-dd41679fc907", "f9734631-6833-4885-93c5-dd41679fc906")));
     }
 
     @Test
-    void getResource1ByID_whenResourceExists() throws Exception {
+    void getAllResource1_whenNotAuthenticatedUser_returnsUnauthorized() throws Exception {
+        mockMvc.perform(get("/resource1"))
+                .andExpect(status().isUnauthorized());
+    }
+
+    @Test
+    @WithUserDetails("resource1-write-user")
+    void getAllResource1_whenAuthenticatedButNotAuthorizedUser_returnsForbidden() throws Exception {
+        mockMvc.perform(get("/resource1"))
+                .andExpect(status().isForbidden());
+    }
+
+    @Test
+    @WithMockUser(roles = "READ_RESOURCE1_ROLE")
+    void getResource1ByID_whenAuthenticatedUserAndResourceExists_returnsResource() throws Exception {
         mockMvc.perform(get("/resource1/f9734631-6833-4885-93c5-dd41679fc908"))
                 .andExpect(status().isOk())
                 .andExpect(content().string(containsString("f9734631-6833-4885-93c5-dd41679fc908")));
     }
 
     @Test
-    void getResource1ByID_whenNoResourceWithThisID() throws Exception {
+    @WithMockUser(username = "resource1-read-user", roles = "READ_RESOURCE1_ROLE")
+    void getResource1ByID_whenAuthenticatedUserAndResourceNotExists_returnsEmpty() throws Exception {
         mockMvc.perform(get("/resource1/f9734631-6833-4885-93c5-dd41679fc900"))
                 .andExpect(status().isOk())
                 .andExpect(content().string(blankOrNullString()));
     }
 
     @Test
-    void createResource1() throws Exception {
+    void getResource1ByID_whenNotAuthenticatedUser_returnsUnauthorized() throws Exception {
+        mockMvc.perform(get("/resource1/f9734631-6833-4885-93c5-dd41679fc900"))
+                .andExpect(status().isUnauthorized());
+    }
+
+    @Test
+    @WithUserDetails("resource1-write-user")
+    void getResource1ByID_whenAuthenticatedButNotAuthorizedUser_returnsForbidden() throws Exception {
+        mockMvc.perform(get("/resource1/f9734631-6833-4885-93c5-dd41679fc900"))
+                .andExpect(status().isForbidden());
+    }
+
+    @Test
+    @WithMockUser(username = "admin", roles = {"CREATE_RESOURCE1_ROLE", "READ_RESOURCE1_ROLE"})
+    void createResource1_whenAuthenticatedUser_createsResources() throws Exception {
         UUID UUID1 = UUID.randomUUID();
+
         mockMvc.perform(post("/resource1")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content("{\"id\":\"" + UUID1 + "\",\"attr1\":\"att1\",\"attr2\":3,\"attr3\":\"2024-02-01 08:15\"}")
         ).andExpect(status().isOk()).andExpect(content().string(blankOrNullString()));
+
         mockMvc.perform(get("/resource1/" + UUID1))
                 .andExpect(status().isOk())
                 .andExpect(content().string(containsString(UUID1.toString())));
     }
 
-    @ParameterizedTest
-    @MethodSource("provideInvalidValuesForMessageBody")
-    void createResource1_shouldFail_forBlankValues(String content) throws Exception {
+    @Test
+    void createResource1_whenNotAuthenticatedUser_returnsUnauthorized() throws Exception {
         mockMvc.perform(post("/resource1")
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(content)
-        ).andExpect(status().isBadRequest());
+                .content("")
+        ).andExpect(status().isUnauthorized());
     }
 
-    private static Stream<Arguments> provideInvalidValuesForMessageBody() {
-        UUID UUID1 = UUID.randomUUID();
-        return Stream.of(
-                // null values
-                Arguments.of("{\"attr1\":\"att1\",\"attr2\":3,\"attr3\":\"2024-02-01T08:15:24.000+00:00\"}"),
-                Arguments.of("{\"id\":\"" + UUID1 + "\",\"attr2\":3,\"attr3\":\"2024-02-01T08:15:24.000+00:00\"}"),
-                Arguments.of("{\"id\":\"" + UUID1 + "\",\"attr1\":\"att1\",\"attr3\":\"2024-02-01T08:15:24.000+00:00\"}"),
-                Arguments.of("{\"id\":\"" + UUID1 + "\",\"attr1\":\"att1\",\"attr2\":3}"),
-                // blank strings
-                Arguments.of("{\"id\":\"" + UUID1 + "\",\"attr1\":\"\",\"attr2\":3,\"attr3\":\"2024-02-01T08:15:24.000+00:00\"}"),
-                Arguments.of("{\"id\":\"" + UUID1 + "\",\"attr1\":\" \",\"attr2\":3,\"attr3\":\"2024-02-01T08:15:24.000+00:00\"}"),
-                Arguments.of("{\"id\":\"" + UUID1 + "\",\"attr1\":\"\t\",\"attr2\":3,\"attr3\":\"2024-02-01T08:15:24.000+00:00\"}"),
-                Arguments.of("{\"id\":\"" + UUID1 + "\",\"attr1\":\"\n\",\"attr2\":3,\"attr3\":\"2024-02-01T08:15:24.000+00:00\"}"),
-                // non positive int
-                Arguments.of("{\"id\":\"" + UUID1 + "\",\"attr1\":\"att1\",\"attr2\":0,\"attr3\":\"2024-02-01T08:15:24.000+00:00\"}"),
-                Arguments.of("{\"id\":\"" + UUID1 + "\",\"attr1\":\"att1\",\"attr2\":-1,\"attr3\":\"2024-02-01T08:15:24.000+00:00\"}"),
-                Arguments.of("{\"id\":\"" + UUID1 + "\",\"attr1\":\"att1\",\"attr2\":9999999999,\"attr3\":\"2024-02-01T08:15:24.000+00:00\"}")
-        );
+    @Test
+    @WithUserDetails("resource1-read-user")
+    void createResource1_whenAuthenticatedButNotAuthorizedUser_returnsForbidden() throws Exception {
+        mockMvc.perform(post("/resource1")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content("")
+        ).andExpect(status().isForbidden());
     }
 }

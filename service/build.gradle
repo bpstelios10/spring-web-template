@@ -29,6 +29,7 @@ dependencies {
     implementation 'io.prometheus:simpleclient_hotspot:0.16.0'
 
     testImplementation("org.springframework.boot:spring-boot-starter-webmvc-test:${versions.springBoot}")
+    testImplementation("org.springframework.boot:spring-boot-security-test:${versions.springBoot}")
 
     test.useJUnitPlatform()
 }
