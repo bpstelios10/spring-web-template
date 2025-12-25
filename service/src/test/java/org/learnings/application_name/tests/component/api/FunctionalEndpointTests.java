@@ -3,9 +3,12 @@ package org.learnings.application_name.tests.component.api;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.webmvc.test.autoconfigure.AutoConfigureMockMvc;
 import org.springframework.http.MediaType;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.test.context.support.WithMockUser;
+import org.springframework.security.test.context.support.WithUserDetails;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
@@ -31,6 +34,7 @@ public class FunctionalEndpointTests {
     private MockMvc mockMvc;
 
     @Test
+    @WithUserDetails("resource1-read-user")
     void getAllResource1() throws Exception {
         mockMvc.perform(get("/resource1"))
                 .andExpect(status().isOk())
@@ -38,6 +42,7 @@ public class FunctionalEndpointTests {
     }
 
     @Test
+    @WithMockUser(roles = "READ_RESOURCE1_ROLE")
     void getResource1ByID_whenResourceExists() throws Exception {
         mockMvc.perform(get("/resource1/f9734631-6833-4885-93c5-dd41679fc908"))
                 .andExpect(status().isOk())
@@ -45,6 +50,7 @@ public class FunctionalEndpointTests {
     }
 
     @Test
+    @WithMockUser(username = "resource1-read-user", roles = "READ_RESOURCE1_ROLE")
     void getResource1ByID_whenNoResourceWithThisID() throws Exception {
         mockMvc.perform(get("/resource1/f9734631-6833-4885-93c5-dd41679fc900"))
                 .andExpect(status().isOk())
@@ -52,6 +58,7 @@ public class FunctionalEndpointTests {
     }
 
     @Test
+    @WithMockUser(username = "admin", roles = {"CREATE_RESOURCE1_ROLE", "READ_RESOURCE1_ROLE"})
     void createResource1() throws Exception {
         UUID UUID1 = UUID.randomUUID();
         mockMvc.perform(post("/resource1")
