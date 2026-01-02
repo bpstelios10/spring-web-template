@@ -25,13 +25,14 @@ dependencies {
     compileOnly 'org.projectlombok:lombok:1.18.42'
     annotationProcessor 'org.projectlombok:lombok:1.18.42'
 
-    implementation 'org.postgresql:postgresql:42.7.2'
-    runtimeOnly 'com.h2database:h2:2.1.214'
+    implementation 'org.postgresql:postgresql:42.7.8'
+    runtimeOnly 'com.h2database:h2:2.4.240'
 
     implementation 'io.micrometer:micrometer-registry-prometheus:1.16.1'
     implementation 'io.prometheus:simpleclient_hotspot:0.16.0'
 
     testImplementation("org.springframework.boot:spring-boot-starter-webmvc-test:${versions.springBoot}")
+    testImplementation "org.springframework.boot:spring-boot-starter-data-jpa-test:${versions.springBoot}"
 
     test.useJUnitPlatform()
 }
