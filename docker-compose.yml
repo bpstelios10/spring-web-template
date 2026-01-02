@@ -1,6 +1,22 @@
 version: '3.8'
 
 services:
+  neo4j:
+    build: neo4j
+    ports:
+      - '7474:7474'
+      - '7687:7687'
+    volumes:
+      - data:/neo4j/data
+    healthcheck:
+      # for 30*5s (+40s initial) -> over 3 mins, test if we can connect to app with the new password
+      # this is to keep the app waiting till neo4j is fully set up (service_healthy)
+      test: cypher-shell -u neo4j -p neo4jpass "match (n) return count(n)"
+      interval: 5s
+      timeout: 5s
+      retries: 30
+      start_period: 40s
+
   service:
     build: service
     environment:
@@ -10,3 +26,9 @@ services:
     ports:
       - "8080:8080"
 #      - "5005:5005"
+    depends_on:
+      neo4j:
+        condition: service_healthy
+
+volumes:
+  data:
