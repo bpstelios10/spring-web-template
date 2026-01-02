@@ -5,7 +5,7 @@ The main responsibility here is to try and keep dependencies to latest versions
 
 Also, containers were added since in today's world almost everything lives in containers.
 So, a Dockerfile with security and following docker best practises, for java applications, was added. Docker-compose as
-well, to make executions easier (escpecially in branches with more than 1 containers, like dbs, mocks etc)
+well, to make executions easier (especially in branches with more than 1 container, like dbs, mocks, etc.)
 
 ## Usage
 

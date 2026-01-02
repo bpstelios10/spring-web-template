@@ -14,6 +14,7 @@ import com.github.dockerjava.core.DockerClientConfig;
 import com.github.dockerjava.core.DockerClientImpl;
 import com.github.dockerjava.httpclient5.ApacheDockerHttpClient;
 import com.github.dockerjava.transport.DockerHttpClient;
+import jakarta.annotation.Nonnull;
 import org.junit.jupiter.api.extension.BeforeAllCallback;
 import org.junit.jupiter.api.extension.ExtensionContext;
 import org.slf4j.Logger;
@@ -23,6 +24,7 @@ import java.io.File;
 import java.net.InetSocketAddress;
 import java.time.Duration;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
@@ -43,7 +45,7 @@ import static org.awaitility.Awaitility.await;
  * <p></p>
  * Improvement could be to leave the container running so that we don't start and stop it every time.
  */
-public class LocalCassandraWithDockerExtension implements BeforeAllCallback, ExtensionContext.Store.CloseableResource {
+public class LocalCassandraWithDockerExtension implements BeforeAllCallback, AutoCloseable {
 
     private static final Logger log = LoggerFactory.getLogger(LocalCassandraWithDockerExtension.class);
     private static final String KEYSPACE_NAME = "test_cassandra";
@@ -70,7 +72,7 @@ public class LocalCassandraWithDockerExtension implements BeforeAllCallback, Ext
     }
 
     @Override
-    public void beforeAll(ExtensionContext context) {
+    public void beforeAll(@Nonnull ExtensionContext context) {
         // lock to prevent parallel threads. Check if tests have executed this code once. then no need to rerun the whole code
         LOCK.lock();
         if (isExecuted) {
@@ -79,12 +81,13 @@ public class LocalCassandraWithDockerExtension implements BeforeAllCallback, Ext
         }
 
         // look for existing images of this name, to avoid dangling images
-        List<Image> testCassandraImages = dockerClient.listImagesCmd().withShowAll(true).withImageNameFilter(CASSANDRA_IMAGE_NAME).exec();
+        List<Image> testCassandraImages = dockerClient.listImagesCmd().withShowAll(true).withLabelFilter(Map.of("name", CASSANDRA_IMAGE_NAME)).exec();
 
         String imageId = !testCassandraImages.isEmpty() ? testCassandraImages.getFirst().getId() : dockerClient
                 .buildImageCmd()
                 .withDockerfile(new File(CASSANDRA_DOCKERFILE_LOCATION))
                 .withTags(Set.of(CASSANDRA_IMAGE_NAME))
+                .withLabels(Map.of("name", CASSANDRA_IMAGE_NAME))
                 .withNoCache(true)
                 .exec(new BuildImageResultCallback())
                 .awaitImageId();
@@ -125,16 +128,20 @@ public class LocalCassandraWithDockerExtension implements BeforeAllCallback, Ext
         if (cassandraContainerID.isBlank())
             throw new RuntimeException("no cassandra container id is set, to be killed");
 
-        log.debug("About to delete cassandra container with id: " + cassandraContainerID);
+        log.debug("About to delete cassandra container with id: {}", cassandraContainerID);
 
-        dockerClient.stopContainerCmd(cassandraContainerID).exec();
-        WaitContainerResultCallback resultCallback = new WaitContainerResultCallback();
-        dockerClient.waitContainerCmd(cassandraContainerID).exec(resultCallback);
-        resultCallback.awaitCompletion();
+        try {
+            dockerClient.stopContainerCmd(cassandraContainerID).exec();
+            WaitContainerResultCallback resultCallback = new WaitContainerResultCallback();
+            dockerClient.waitContainerCmd(cassandraContainerID).exec(resultCallback);
+            resultCallback.awaitCompletion();
 
-        dockerClient.removeContainerCmd(cassandraContainerID).exec();
-        dockerClient.waitContainerCmd(cassandraContainerID).exec(resultCallback);
-        resultCallback.awaitCompletion();
+            dockerClient.removeContainerCmd(cassandraContainerID).exec();
+            dockerClient.waitContainerCmd(cassandraContainerID).exec(resultCallback);
+            resultCallback.awaitCompletion();
+        } catch (com.github.dockerjava.api.exception.InternalServerErrorException ex) {
+            log.warn("Error interacting with docker. The container might not got removed properly. With error: {}", ex.getMessage());
+        }
     }
 
     private void startDockerContainer(String containerToStartID) {
@@ -149,10 +156,11 @@ public class LocalCassandraWithDockerExtension implements BeforeAllCallback, Ext
                     .withLocalDatacenter("datacenter1")
                     .withKeyspace(CASSANDRA_CONTAINER_NAME)
                     .build()) {
-                log.debug("session was created: " + session.getName());
+                log.debug("session was created: {}", session.getName());
                 assertThat(true).isTrue();
             } catch (Exception ex) {
-                // Some classnotfound exceptions (cause of dependency conflicts) are thrown here when the session fails, but all is good when it succeeds
+                // Some classnotfound exceptions (cause of dependency conflicts) are thrown here when the session fails,
+                // but all is good when it succeeds
                 assertThat(true).isFalse();
             }
         });

@@ -3,7 +3,7 @@ A million issues with embedded cassandras and stubbed cassandras interacting wit
 
 ## Option 1 
 (like https://github.com/nosan/embedded-cassandra) is to download a cassandra and try to start it up with code.
-But cassandra 4+ doesnt provide any runner for windows any more. So this makes solution complex.
+But cassandra 4+ doesn't provide any runner for windows anymore. So this makes solution complex.
 https://downloads.apache.org/cassandra/
 
 ## Option 2 
@@ -13,7 +13,7 @@ But Java21 fails some reflection code (at least in cassandra 4+).
 
 ## Option 3 
 (like this project) use docker-java-client to spin up cassandra docker container before tests and/or local
-execution. (in this case we dont use the docker-java-client for local executions to avoid have it in the jar that is
+execution. (in this case we don't use the docker-java-client for local executions to avoid have it in the jar that is
 supposed to go to production. instead we can manually start cassandra and keep it running, so that we can test changes
 fast. docker-compose can be used too, but testing service changes might be slower).
 PS: This solution of course takes ages, for starting the cassandra image each time.
