@@ -12,11 +12,11 @@ import org.learnings.application_name.infrastructure.repositories.RentedMoviesRe
 import org.learnings.application_name.services.IRentedMoviesEntity;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.boot.webmvc.test.autoconfigure.AutoConfigureMockMvc;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.ActiveProfiles;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 
 import java.sql.Timestamp;
@@ -41,9 +41,11 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @AutoConfigureMockMvc
 @ActiveProfiles("component-test")
 public class RentedMoviesEndpointTests {
+    @SuppressWarnings("unused")
     @Autowired
     private MockMvc mockMvc;
-    @MockBean
+    @SuppressWarnings("unused")
+    @MockitoBean
     private RentedMoviesRepository repository;
 
     private static final UUID clientUUID = UUID.randomUUID();
@@ -71,7 +73,7 @@ public class RentedMoviesEndpointTests {
 
     @Test
     void getRentedMovieForClient_whenRentedMovieExists() throws Exception {
-        when(repository.findByRentedMoviesEntityKeyClientIDAndRentedMoviesEntityKeyMovieID(clientUUID, firstMovieUUID)).thenReturn(Optional.of(dataSource.get(0)));
+        when(repository.findByRentedMoviesEntityKeyClientIDAndRentedMoviesEntityKeyMovieID(clientUUID, firstMovieUUID)).thenReturn(Optional.of(dataSource.getFirst()));
 
         mockMvc.perform(get("/account/" + clientUUID + "/watchlist/movies/f9734631-6833-4885-93c5-dd41679fc908"))
                 .andExpect(status().isOk())
@@ -91,7 +93,7 @@ public class RentedMoviesEndpointTests {
     void addRentedMovieToClient() throws Exception {
         when(repository.findByRentedMoviesEntityKeyClientIDAndRentedMoviesEntityKeyMovieID(clientUUID, firstMovieUUID))
                 .thenReturn(Optional.empty());
-        when(repository.save(dataSource.get(0))).thenReturn(dataSource.get(0));
+        when(repository.save(dataSource.getFirst())).thenReturn(dataSource.getFirst());
         RentedMovieRequestModel requestBody = new RentedMovieRequestModel(firstMovieUUID.toString());
 
         mockMvc.perform(post("/account/" + clientUUID + "/watchlist/movies")
