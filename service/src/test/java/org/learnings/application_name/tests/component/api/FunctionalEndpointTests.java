@@ -9,8 +9,8 @@ import org.learnings.application_name.model.Movie;
 import org.learnings.application_name.model.Person;
 import org.learnings.application_name.model.WatchedRelationship;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.webmvc.test.autoconfigure.AutoConfigureMockMvc;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
@@ -35,6 +35,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @ActiveProfiles("component-test")
 public class FunctionalEndpointTests {
 
+    @SuppressWarnings("unused")
     @Autowired
     private MockMvc mockMvc;
 

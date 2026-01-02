@@ -29,7 +29,7 @@ dependencies {
     implementation 'io.prometheus:simpleclient_hotspot:0.16.0'
 
     testImplementation("org.springframework.boot:spring-boot-starter-webmvc-test:${versions.springBoot}")
-    testImplementation('org.neo4j.test:neo4j-harness:5.18.1') {
+    testImplementation('org.neo4j.test:neo4j-harness:2025.11.2') {
         exclude group: 'org.neo4j', module: 'neo4j-slf4j-provider'
         exclude group: 'commons-logging'
     }

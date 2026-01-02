@@ -30,7 +30,7 @@ public class Neo4jHarnessExtension implements BeforeAllCallback {
     private static final Logger LOGGER = LoggerFactory.getLogger(Neo4jHarnessExtension.class);
 
     @Override
-    public void beforeAll(ExtensionContext context) {
+    public void beforeAll(@SuppressWarnings("NullableProblems") ExtensionContext context) {
         // lock to prevent parallel threads. Check if tests have executed this code once. then no need to rerun the whole code
         LOCK.lock();
         if (isExecuted) {
@@ -69,7 +69,7 @@ public class Neo4jHarnessExtension implements BeforeAllCallback {
         getTopLevelContext.getStore(ExtensionContext.Namespace.GLOBAL).put("AfterAllTestsExecutor", new CustomAfterSuite());
     }
 
-    private static class CustomAfterSuite implements ExtensionContext.Store.CloseableResource {
+    private static class CustomAfterSuite implements AutoCloseable {
         private static final Logger LOGGER = LoggerFactory.getLogger(CustomAfterSuite.class);
 
         @Override
