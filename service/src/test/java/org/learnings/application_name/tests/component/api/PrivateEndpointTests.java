@@ -3,7 +3,7 @@ package org.learnings.application_name.tests.component.api;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
+import org.springframework.boot.webmvc.test.autoconfigure.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.ActiveProfiles;
@@ -47,7 +47,7 @@ public class PrivateEndpointTests {
 
         mockMvc.perform(get("/netflix/private/metrics"))
                 .andExpect(status().isOk())
-                .andExpect(content().string(containsString("http_server_requests_seconds_count{error=\"none\",exception=\"none\",method=\"GET\",outcome=\"SUCCESS\",status=\"200\",uri=\"/private/status\",} ")));
+                .andExpect(content().string(containsString("http_server_requests_seconds_count{error=\"none\",exception=\"none\",method=\"GET\",outcome=\"SUCCESS\",status=\"200\",uri=\"/private/status\"} ")));
     }
 
     @Test

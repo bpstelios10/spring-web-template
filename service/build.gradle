@@ -1,11 +1,11 @@
 buildscript {
     repositories {
-        maven { url 'https://repo.spring.io/snapshot' }
-        maven { url 'https://repo.spring.io/libs-milestone' }
+        maven { url = 'https://repo.spring.io/snapshot' }
+        maven { url = 'https://repo.spring.io/libs-milestone' }
         gradlePluginPortal()
     }
     dependencies {
-        classpath 'org.springframework.boot:spring-boot-gradle-plugin:3.2.4'
+        classpath "org.springframework.boot:spring-boot-gradle-plugin:${versions.springBoot}"
     }
 }
 
@@ -13,7 +13,7 @@ apply plugin: 'org.springframework.boot'
 
 repositories {
     mavenCentral()
-    maven { url 'https://repo.spring.io/snapshot' }
+    maven { url = 'https://repo.spring.io/snapshot' }
 }
 
 dependencies {
@@ -22,13 +22,13 @@ dependencies {
     implementation "org.springframework.boot:spring-boot-starter-validation:${versions.springBoot}"
     implementation "org.springframework.boot:spring-boot-starter-data-neo4j:${versions.springBoot}"
 
-    compileOnly 'org.projectlombok:lombok:1.18.30'
-    annotationProcessor 'org.projectlombok:lombok:1.18.30'
+    compileOnly 'org.projectlombok:lombok:1.18.42'
+    annotationProcessor 'org.projectlombok:lombok:1.18.42'
 
-    implementation 'io.micrometer:micrometer-registry-prometheus:1.12.2'
+    implementation 'io.micrometer:micrometer-registry-prometheus:1.16.1'
     implementation 'io.prometheus:simpleclient_hotspot:0.16.0'
 
-    testImplementation("org.springframework.boot:spring-boot-starter-test:${versions.springBoot}")
+    testImplementation("org.springframework.boot:spring-boot-starter-webmvc-test:${versions.springBoot}")
     testImplementation('org.neo4j.test:neo4j-harness:5.18.1') {
         exclude group: 'org.neo4j', module: 'neo4j-slf4j-provider'
         exclude group: 'commons-logging'
