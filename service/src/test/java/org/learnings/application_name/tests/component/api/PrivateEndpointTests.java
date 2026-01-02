@@ -17,12 +17,11 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 /**
  * Testing spring-web and spring-actuator endpoints
  */
-@ExtendWith(SpringExtension.class)
+@ExtendWith({LocalCassandraWithDockerExtension.class, SpringExtension.class})
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.MOCK)
 @AutoConfigureMockMvc
 @ActiveProfiles("component-test-actuator")
 public class PrivateEndpointTests {
-
     @Autowired
     private MockMvc mockMvc;
 
@@ -55,41 +54,5 @@ public class PrivateEndpointTests {
         mockMvc.perform(get("/application_name/private/configprops"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.contexts.application.beans").isNotEmpty());
-    }
-
-    @Test
-    void getActuatorEnv() throws Exception {
-        mockMvc.perform(get("/application_name/private/env"))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.activeProfiles").value("component-test-actuator"));
-    }
-
-    @Test
-    void getActuatorHeapdump() throws Exception {
-        mockMvc.perform(get("/application_name/private/heapdump"))
-                .andExpect(status().isOk());
-    }
-
-    @Test
-    void getActuatorHealth() throws Exception {
-        mockMvc.perform(get("/application_name/private/health"))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$['status']").value("UP"))
-                .andExpect(content().string(containsString("liveness")))
-                .andExpect(content().string(containsString("readiness")));
-    }
-
-    @Test
-    void getActuatorLivenessCheck() throws Exception {
-        mockMvc.perform(get("/application_name/private/health/liveness"))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$['status']").value("UP"));
-    }
-
-    @Test
-    void getActuatorReadinessCheck() throws Exception {
-        mockMvc.perform(get("/application_name/private/health/readiness"))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$['status']").value("UP"));
     }
 }

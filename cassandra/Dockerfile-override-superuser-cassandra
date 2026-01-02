@@ -1,0 +1,26 @@
+FROM cassandra:5.0 as cassandra-base
+
+MAINTAINER Stelios <bpstelios10@hotmail.com>
+
+# exposing port here is mostly for documentation purposes. not really doing much
+EXPOSE 9042
+# create a group and user (no uid) to run as non-root. create home dir for this user
+RUN groupadd cassandra_executors_group && useradd -m -g cassandra_executors_group cassandra_executor
+RUN chown -R cassandra_executor:cassandra_executors_group /opt/cassandra
+
+# set workdir of the container to the created user's home folder
+WORKDIR /home/cassandra_executor
+# create entry script for cassandra. This will execute all cql files in docker-entrypoint-initdb.d
+COPY scripts/cassandra-entrypoint.sh /home/cassandra_executor/cassandra-entrypoint.sh
+
+ENTRYPOINT ["/home/cassandra_executor/cassandra-entrypoint.sh"]
+
+# --- end base image here --- #
+FROM cassandra-base
+
+COPY scripts/cql-bootstrap/*.cql /docker-entrypoint-initdb.d/
+
+# set user of the container
+USER cassandra_executor
+
+CMD ["cassandra", "-f"]

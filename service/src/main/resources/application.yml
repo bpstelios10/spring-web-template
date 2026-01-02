@@ -17,10 +17,21 @@ management:
 
 server:
   servlet:
-    context-path: /application_name
+    context-path: /netflix
   tomcat:
     accept-count: 120
     mbeanregistry:
       enabled: true
     threads:
       max: 1200
+
+spring:
+  data:
+    cassandra:
+      contact-points: localhost
+      port: 9042
+      username: 'cassandra'
+      password: 'cassandra'
+      datacenter: 'datacenter1'
+      keyspace: 'test_cassandra'
+      schema-action: NONE
