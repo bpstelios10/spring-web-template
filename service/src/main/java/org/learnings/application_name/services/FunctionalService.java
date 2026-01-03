@@ -10,7 +10,7 @@ import java.util.*;
 @Component
 public class FunctionalService {
 
-    //this would be better injected but i dont want to add configuration files and complexity in the scope of this example
+    //this would be better injected, but we don't want to add configuration files and complexity in the scope of this ex
     private static final Map<UUID, FunctionalResource> dataSource = new HashMap<>();
 
     static {
@@ -26,10 +26,6 @@ public class FunctionalService {
         return callToDataSource();
     }
 
-    private List<FunctionalResource> callToDataSource() {
-        return dataSource.values().stream().toList();
-    }
-
     public Optional<FunctionalResource> getResource1ByID(UUID requestID) {
         return Optional.ofNullable(dataSource.get(requestID));
     }
@@ -37,5 +33,9 @@ public class FunctionalService {
     public void createResource1(FunctionalResource expectedResource) {
         if (!dataSource.containsKey(expectedResource.id()))
             dataSource.put(expectedResource.id(), expectedResource);
+    }
+
+    private List<FunctionalResource> callToDataSource() {
+        return dataSource.values().stream().toList();
     }
 }
