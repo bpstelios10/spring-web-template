@@ -56,15 +56,15 @@ public class FunctionalController {
         return ResponseEntity.ok().build();
     }
 
-    record Resource1RequestModel(@NotNull UUID id, @NotBlank String attr1, @Positive int attr2,
-                                 @NotNull @JsonFormat(pattern = "dd-MM-yyyy HH:mm") Date attr3) {
+    public record Resource1RequestModel(@NotNull UUID id, @NotBlank String attr1, @Positive int attr2,
+                                        @NotNull @JsonFormat(pattern = "dd-MM-yyyy HH:mm") Date attr3) {
         FunctionalResource toDomainObject() {
             return new FunctionalResource(id, attr1, attr2, attr3);
         }
     }
 
-    record Resource1ResponseModel(@NotNull UUID id, @NotBlank String attr1, @Positive int attr2,
-                                  @NotNull @JsonFormat(pattern = "dd-MM-yyyy HH:mm") Date attr3) {
+    public record Resource1ResponseModel(@NotNull UUID id, @NotBlank String attr1, @Positive int attr2,
+                                         @NotNull @JsonFormat(pattern = "dd-MM-yyyy HH:mm") Date attr3) {
         static Resource1ResponseModel fromDomainObject(FunctionalResource functionalResource) {
             return new Resource1ResponseModel(functionalResource.id(), functionalResource.attribute1(), functionalResource.attribute2(),
                     functionalResource.attribute3());
