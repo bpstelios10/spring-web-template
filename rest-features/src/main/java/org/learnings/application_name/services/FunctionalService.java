@@ -35,6 +35,11 @@ public class FunctionalService {
             dataSource.put(expectedResource.id(), expectedResource);
     }
 
+    public void patchResource1(FunctionalResource expectedResource) {
+        if (dataSource.containsKey(expectedResource.id()))
+            dataSource.put(expectedResource.id(), expectedResource);
+    }
+
     private List<FunctionalResource> callToDataSource() {
         return dataSource.values().stream().toList();
     }
