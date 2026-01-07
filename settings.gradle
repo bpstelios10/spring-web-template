@@ -1,3 +1,4 @@
 rootProject.name = 'spring-web-template'
 
-include 'template-minimum'
+include 'template-minimum',
+        'functional-controllers'
