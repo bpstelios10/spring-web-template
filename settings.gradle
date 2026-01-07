@@ -2,4 +2,5 @@ rootProject.name = 'spring-web-template'
 
 include 'template-minimum',
         'functional-controllers',
-        'cache-redis'
+        'cache-redis',
+        'rest-features'
