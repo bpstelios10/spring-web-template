@@ -1,21 +1,3 @@
 server:
   threads:
-    max: 400
-
-## PostgreSQL
-spring:
-  datasource:
-    driverClassName: 'org.postgresql.Driver'
-    url: 'jdbc:postgresql://postgres-db:5432/students'
-    ## default connection pool
-#    hikari:
-#      connectionTimeout: 20000
-#      maximumPoolSize: 5
-  sql:
-    init:
-      mode: 'always'
-      schema-locations: 'classpath:schema-local.sql'
-      data-locations: 'classpath:data-embedded.sql'
-  h2:
-    console:
-      enabled: false
+    max: 1000

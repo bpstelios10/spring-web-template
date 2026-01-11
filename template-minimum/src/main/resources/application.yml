@@ -24,21 +24,3 @@ server:
       enabled: true
     threads:
       max: 1200
-
-spring:
-  datasource:
-    url: 'jdbc:h2:mem:students'
-    driverClassName: 'org.h2.Driver'
-    username: ${DB_USERNAME:dbuser}
-    password: ${DB_PASSWORD:dbpass}
-  jpa:
-    database-platform: 'org.hibernate.dialect.PostgreSQLDialect'
-    hibernate:
-      ddl-auto: 'create'
-    show-sql: true
-  h2:
-    console:
-      enabled: true
-      path: '/h2-console'
-      settings:
-        web-allow-others: true
