@@ -1,4 +1,0 @@
-spring:
-  datasource:
-    hikari:
-      maximumPoolSize: 1
