@@ -1,8 +1,8 @@
-version: '3.8'
+version: '3.9'
 
 services:
   service:
-    build: service
+    build: template-minimum
     environment:
       - DEPLOYMENT_ENVIRONMENT=docker-compose
 #      for java remote debugger open a port, eg 5005:
