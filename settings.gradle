@@ -4,4 +4,5 @@ include 'template-minimum',
         'functional-controllers',
         'cache-redis',
         'rest-features',
-        'spring-data-h2'
+        'spring-data-h2',
+        'spring-data-pagination'
