@@ -19,8 +19,11 @@ server:
   servlet:
     context-path: /application_name
   tomcat:
+    max-threads: 500
     accept-count: 120
     mbeanregistry:
-      enabled: true # enable the MBeans to be used by micrometer to expose metrics
-    threads:
-      max: 1200
+      enabled: true
+
+service:
+  rate-limiter:
+    store: local

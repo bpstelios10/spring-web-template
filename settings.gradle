@@ -5,4 +5,5 @@ include 'template-minimum',
         'cache-redis',
         'rest-features',
         'spring-data-h2',
-        'spring-data-pagination'
+        'spring-data-pagination',
+        'input-rate-limiter-bucket4j'
