@@ -28,6 +28,14 @@ dependencies {
     implementation 'io.micrometer:micrometer-registry-prometheus:1.16.1'
     implementation 'io.prometheus:simpleclient_hotspot:0.16.0'
 
+    // there is a conflict between this version in data-cassandra and web
+    // instead of cassandra's 2.13.5, we force the web version 2.20
+    implementation('com.fasterxml.jackson.core:jackson-databind') {
+        version {
+            strictly("2.20.0")
+        }
+    }
+
     testImplementation "org.springframework.boot:spring-boot-starter-webmvc-test:${versions.springBoot}"
 //    NEXT LINES ARE FOR DOCKER JAVA CLIENT, EXCLUDING VULNERABILITIES AND REDUNDANT DEPENDENCIES
     testImplementation 'com.github.docker-java:docker-java:3.7.0'

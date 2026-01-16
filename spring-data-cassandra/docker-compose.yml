@@ -2,7 +2,7 @@ version: '3.9'
 
 services:
   cassandra:
-    build: spring-data-cassandra/cassandra
+    build: cassandra
     ports:
       - "9042:9042"
     healthcheck:
