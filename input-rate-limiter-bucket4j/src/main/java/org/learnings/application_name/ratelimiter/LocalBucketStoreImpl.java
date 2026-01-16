@@ -1,4 +1,4 @@
-package org.learnings.application_name.web.ratelimiter;
+package org.learnings.application_name.ratelimiter;
 
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.stereotype.Component;

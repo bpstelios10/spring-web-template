@@ -1,4 +1,4 @@
-package org.learnings.application_name.web.ratelimiter;
+package org.learnings.application_name.ratelimiter;
 
 import io.github.bucket4j.Bucket;
 import io.github.bucket4j.ConsumptionProbe;
@@ -35,8 +35,8 @@ public class CustomerRateLimitingInterceptor implements HandlerInterceptor {
         }
 
         Bucket tokenBucket = customerRateLimitingPlanService.resolveBucketForCustomer(apiKey);
-        LOG.debug("******** Bucket: {}", tokenBucket);
-        LOG.debug("******** Bucket Hash: {}", tokenBucket.hashCode());
+//        LOG.debug("******** Bucket: {}", tokenBucket);
+//        LOG.debug("******** Bucket Hash: {}", tokenBucket.hashCode());
         LOG.debug("******** Bucket available tokens: {}", tokenBucket.getAvailableTokens());
 
         ConsumptionProbe probe = tokenBucket.tryConsumeAndReturnRemaining(1);

@@ -1,3 +1,11 @@
 server:
     threads:
       max: 1000
+
+## redis
+service:
+  rate-limiter:
+    store: db
+    host: ${RATE_LIMIT_STORE_HOST:localhost}
+    port: ${RATE_LIMIT_STORE_PORT:6379}
+    password: ${RATE_LIMIT_STORE_PASSWORD:dbpass}

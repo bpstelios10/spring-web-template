@@ -28,6 +28,9 @@ dependencies {
     implementation 'io.prometheus:simpleclient_hotspot:0.16.0'
 
     implementation 'com.bucket4j:bucket4j_jdk17-core:8.16.0'
+    implementation 'com.bucket4j:bucket4j_jdk17-redis-common:8.16.0'
+    implementation 'com.bucket4j:bucket4j_jdk17-lettuce:8.16.0'
+    implementation 'io.lettuce:lettuce-core:7.2.1.RELEASE'
 
     testImplementation("org.springframework.boot:spring-boot-starter-webmvc-test:${versions.springBoot}")
 

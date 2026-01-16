@@ -1,4 +1,4 @@
-package org.learnings.application_name.web.ratelimiter;
+package org.learnings.application_name.ratelimiter;
 
 import io.github.bucket4j.Bandwidth;
 
@@ -7,7 +7,7 @@ import java.time.Duration;
 enum CustomerRateLimitingPlan {
     FREE {
         Bandwidth getLimit() {
-            return Bandwidth.builder().capacity(2).refillIntervally(2, Duration.ofSeconds(1)).build();
+            return Bandwidth.builder().capacity(2).refillIntervally(2, Duration.ofSeconds(3)).build();
         }
     },
     BASIC {

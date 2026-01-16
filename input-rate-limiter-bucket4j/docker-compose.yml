@@ -1,0 +1,28 @@
+version: '3.9'
+
+services:
+  service:
+    build: .
+    depends_on:
+      - redis-bucket4j
+    environment:
+      - DEPLOYMENT_ENVIRONMENT=docker-compose
+      - RATE_LIMIT_STORE_HOST=redis-bucket4j
+#      - RATE_LIMIT_STORE_PASSWORD=S3cret
+#      for java remote debugger open a port, eg 5005:
+#      - JAVA_OPTIONS=-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:5005
+    ports:
+      - "8080:8080"
+#      - "5005:5005"
+
+  redis-bucket4j:
+    image: redis:8.4-alpine
+    hostname: redis-bucket4j
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis-bucket4j:/data
+
+volumes:
+  redis-bucket4j:
+    driver: local

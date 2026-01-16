@@ -1,7 +1,7 @@
 package org.learnings.application_name.web.configuration;
 
-import org.learnings.application_name.web.ratelimiter.CustomerRateLimitingInterceptor;
-import org.learnings.application_name.web.ratelimiter.CustomerRateLimitingPlanService;
+import org.learnings.application_name.ratelimiter.CustomerRateLimitingInterceptor;
+import org.learnings.application_name.ratelimiter.CustomerRateLimitingPlanService;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
