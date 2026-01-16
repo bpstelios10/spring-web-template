@@ -15,7 +15,7 @@ import org.springframework.data.cassandra.config.SchemaAction;
 import org.springframework.data.cassandra.core.CassandraTemplate;
 import org.springframework.data.cassandra.core.convert.CassandraConverter;
 import org.springframework.data.cassandra.repository.config.EnableCassandraRepositories;
-import org.springframework.lang.NonNull;
+import org.jspecify.annotations.NonNull;
 
 import java.net.InetSocketAddress;
 import java.util.Arrays;

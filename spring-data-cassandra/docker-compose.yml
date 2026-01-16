@@ -1,0 +1,30 @@
+version: '3.9'
+
+services:
+  cassandra:
+    build: spring-data-cassandra/cassandra
+    ports:
+      - "9042:9042"
+    healthcheck:
+      # for 18*10s -> 3 mins test if we can connect to app keyspace
+      # this is to keep the app waiting till cassandra is fully set up (service_healthy)
+      test: cqlsh -k test_cassandra
+      interval: 5s
+      timeout: 10s
+      retries: 18
+
+  service:
+    build: .
+    environment:
+      - DEPLOYMENT_ENVIRONMENT=docker-compose
+    #      for java remote debugger open a port, eg 5005:
+    #      - JAVA_OPTIONS=-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:5005
+    ports:
+      - "8080:8080"
+    #      - "5005:5005"
+    depends_on:
+      cassandra:
+        condition: service_healthy
+
+volumes:
+  dbdata6:

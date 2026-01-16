@@ -15,7 +15,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.webmvc.test.autoconfigure.AutoConfigureMockMvc;
 import org.springframework.http.MediaType;
-import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 
@@ -39,7 +38,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @ExtendWith({LocalCassandraWithDockerExtension.class, MockitoExtension.class})
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.MOCK)
 @AutoConfigureMockMvc
-@ActiveProfiles("component-test")
 public class RentedMoviesEndpointTests {
     @SuppressWarnings("unused")
     @Autowired
@@ -103,8 +101,8 @@ public class RentedMoviesEndpointTests {
     }
 
     @ParameterizedTest(name = "Input {index}: {0}")
-    @NullAndEmptySource
     @ValueSource(strings = {"  ", "\t", "\n"})
+    @NullAndEmptySource
     void addRentedMovie_shouldFail_forInvalidValues(String content) throws Exception {
         RentedMovieRequestModel requestBody = new RentedMovieRequestModel(content);
 

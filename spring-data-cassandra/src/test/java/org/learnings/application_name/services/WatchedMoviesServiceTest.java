@@ -84,7 +84,7 @@ class WatchedMoviesServiceTest {
 
             assertThat(mockedConstructor.constructed()).hasSize(1);
             // assert that the constructor called was the one with timesRented (third argument) is equal to 1
-            assertThat(mockedConstructorArgs.get(mockedConstructor.constructed().get(0)).get(2)).isEqualTo(1);
+            assertThat(mockedConstructorArgs.get(mockedConstructor.constructed().getFirst()).get(2)).isEqualTo(1);
             verifyNoMoreInteractions(repository, expectedRentedMovie);
         }
     }

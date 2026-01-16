@@ -1,4 +1,4 @@
-package org.learnings.application_name.infrastructure.web.controller;
+package org.learnings.application_name.web.controller;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
@@ -17,17 +17,4 @@ public class PrivateController {
 
         return ResponseEntity.ok("OK");
     }
-//
-//    @GetMapping(path = "/readinessCustomCheck")
-//    public ResponseEntity<String> readinessCustomCheck() {
-//        log.info("checking readiness");
-//
-//        String getTime = "SELECT toTimestamp(now()) FROM system.local";
-//        DefaultRow one = cassandraTemplate.selectOne(getTime, DefaultRow.class);
-//
-//        if (one != null && one.getInstant(0) != null) log.info(String.valueOf(one.getInstant(0)));
-//        else log.info("'SELECT now() FROM system.local' didnt give a response back");
-//
-//        return ResponseEntity.ok("OK");
-//    }
 }
