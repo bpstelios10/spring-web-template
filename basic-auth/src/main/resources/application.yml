@@ -1,0 +1,43 @@
+management:
+  server:
+    port: 8081
+  endpoints:
+    web:
+      base-path: /application_name/private
+      exposure:
+        include: prometheus,configprops,env,health,heapdump
+      path-mapping:
+        prometheus: metrics
+  endpoint:
+    health:
+      probes:
+        enabled: true
+    heapdump:
+      enabled: true
+
+server:
+  servlet:
+    context-path: /application_name
+  tomcat:
+    accept-count: 120
+    mbeanregistry:
+      enabled: true
+    threads:
+      max: 1200
+
+service:
+  basic-auth:
+    secured-endpoints:
+      - method: POST
+        urlPattern: /resource1
+        role: CREATE_RESOURCE1_ROLE
+      - method: GET
+        urlPattern: /resource1/**
+        role: READ_RESOURCE1_ROLE
+    users:
+      - username: resource1-write-user
+        password: ${APPLICATION_NAME_BASIC_AUTH_PASSWORD_WRITE_RESOURCE1:password}
+        role: CREATE_RESOURCE1_ROLE
+      - username: resource1-read-user
+        password: ${APPLICATION_NAME_BASIC_AUTH_PASSWORD_READ_RESOURCE1:password}
+        role: READ_RESOURCE1_ROLE
