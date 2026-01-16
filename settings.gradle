@@ -7,4 +7,5 @@ include 'template-minimum',
         'spring-data-h2',
         'spring-data-pagination',
         'input-rate-limiter-bucket4j',
-        'basic-auth'
+        'basic-auth',
+        'spring-data-cassandra'

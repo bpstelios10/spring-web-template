@@ -1,0 +1,13 @@
+server:
+    threads:
+      max: 1000
+
+spring:
+  data:
+    cassandra:
+      contact-points: cassandra
+      port: 9042
+      username: 'cassandra'
+      password: 'cassandra'
+      keyspace: 'test_cassandra'
+      schema-action: NONE
