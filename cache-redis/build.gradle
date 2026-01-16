@@ -33,7 +33,7 @@ dependencies {
 
     testImplementation("org.springframework.boot:spring-boot-starter-webmvc-test:${versions.springBoot}")
     // for some reason, at test, this dependency is forced to latest. this breaks the build, so we need to force it
-    testImplementation('io.netty:netty-common') {
+    implementation('io.netty:netty-common') {
         version {
             strictly("4.1.118.Final")
         }

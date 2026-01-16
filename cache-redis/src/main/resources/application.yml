@@ -25,6 +25,15 @@ server:
     threads:
       max: 1200
 
-redis:
-  host: localhost
-  port: 6379
+spring:
+  data:
+    redis:
+      host: ${service.caching-db.host}
+      port: ${service.caching-db.port}
+
+## redis
+service:
+  caching-db:
+    embedded: true
+    host: ${CACHING_DB_HOST:localhost}
+    port: ${CACHING_DB_PORT:6379}
