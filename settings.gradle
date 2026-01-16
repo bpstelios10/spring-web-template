@@ -1,3 +1,9 @@
 rootProject.name = 'spring-web-template'
 
-include 'service'
+include 'template-minimum',
+        'functional-controllers',
+        'cache-redis',
+        'rest-features',
+        'spring-data-h2',
+        'spring-data-pagination',
+        'input-rate-limiter-bucket4j'

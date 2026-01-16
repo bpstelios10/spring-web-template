@@ -1,0 +1,39 @@
+management:
+  server:
+    port: 8081
+  endpoints:
+    web:
+      base-path: /application_name/private
+      exposure:
+        include: prometheus,configprops,env,health,heapdump
+      path-mapping:
+        prometheus: metrics
+  endpoint:
+    health:
+      probes:
+        enabled: true
+    heapdump:
+      enabled: true
+
+server:
+  servlet:
+    context-path: /application_name
+  tomcat:
+    accept-count: 120
+    mbeanregistry:
+      enabled: true
+    threads:
+      max: 1200
+
+spring:
+  data:
+    redis:
+      host: ${service.caching-db.host}
+      port: ${service.caching-db.port}
+
+## redis
+service:
+  caching-db:
+    embedded: true
+    host: ${CACHING_DB_HOST:localhost}
+    port: ${CACHING_DB_PORT:6379}

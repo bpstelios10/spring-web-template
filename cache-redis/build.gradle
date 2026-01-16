@@ -1,0 +1,46 @@
+buildscript {
+    repositories {
+        maven { url = 'https://repo.spring.io/snapshot' }
+        maven { url = 'https://repo.spring.io/libs-milestone' }
+        gradlePluginPortal()
+    }
+    dependencies {
+        classpath "org.springframework.boot:spring-boot-gradle-plugin:${versions.springBoot}"
+    }
+}
+
+apply plugin: 'org.springframework.boot'
+
+repositories {
+    mavenCentral()
+    maven { url = 'https://repo.spring.io/snapshot' }
+}
+
+dependencies {
+    implementation "org.springframework.boot:spring-boot-starter-web:${versions.springBoot}"
+    implementation "org.springframework.boot:spring-boot-starter-actuator:${versions.springBoot}"
+    implementation "org.springframework.boot:spring-boot-starter-validation:${versions.springBoot}"
+    implementation "org.springframework.boot:spring-boot-starter-cache:${versions.springBoot}"
+    implementation "org.springframework.boot:spring-boot-starter-data-redis:${versions.springBoot}"
+
+    compileOnly 'org.projectlombok:lombok:1.18.42'
+    annotationProcessor 'org.projectlombok:lombok:1.18.42'
+
+    implementation 'com.github.codemonstur:embedded-redis:1.4.3'
+
+    implementation 'io.micrometer:micrometer-registry-prometheus:1.16.1'
+    implementation 'io.prometheus:simpleclient_hotspot:0.16.0'
+
+    testImplementation("org.springframework.boot:spring-boot-starter-webmvc-test:${versions.springBoot}")
+    // for some reason, at test, this dependency is forced to latest. this breaks the build, so we need to force it
+    implementation('io.netty:netty-common') {
+        version {
+            strictly("4.1.118.Final")
+        }
+    }
+
+    test.useJUnitPlatform()
+}
+
+jar.enabled=false
+bootJar.archiveFileName='service.jar'

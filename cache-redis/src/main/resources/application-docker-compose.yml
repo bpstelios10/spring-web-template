@@ -1,0 +1,7 @@
+server:
+    threads:
+      max: 1000
+
+service:
+  caching-db:
+    embedded: false

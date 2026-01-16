@@ -1,0 +1,29 @@
+management:
+  server:
+    port: 8081
+  endpoints:
+    web:
+      base-path: /application_name/private
+      exposure:
+        include: prometheus,configprops,env,health,heapdump
+      path-mapping:
+        prometheus: metrics
+  endpoint:
+    health:
+      probes:
+        enabled: true
+    heapdump:
+      enabled: true
+
+server:
+  servlet:
+    context-path: /application_name
+  tomcat:
+    max-threads: 500
+    accept-count: 120
+    mbeanregistry:
+      enabled: true
+
+service:
+  rate-limiter:
+    store: local

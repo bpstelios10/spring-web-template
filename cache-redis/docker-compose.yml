@@ -2,11 +2,26 @@ version: '3.9'
 
 services:
   service:
-    build: template-minimum
+    build: .
+    depends_on:
+      - redis-cache
     environment:
       - DEPLOYMENT_ENVIRONMENT=docker-compose
+      - CACHING_DB_HOST=redis-cache
 #      for java remote debugger open a port, eg 5005:
 #      - JAVA_OPTIONS=-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:5005
     ports:
       - "8080:8080"
 #      - "5005:5005"
+
+  redis-cache:
+    image: redis:8.4-alpine
+    hostname: redis-cache
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis-cache:/data
+
+volumes:
+  redis-cache:
+    driver: local
