@@ -1,4 +1,4 @@
-package org.learnings.application_name.config;
+package org.learnings.application_name.ratelimiter.store;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -10,10 +10,11 @@ import org.springframework.context.annotation.Configuration;
 @Getter
 @Setter
 @Configuration
-@ConfigurationProperties("service.caching-db")
+@ConfigurationProperties("service.rate-limiter")
 @AllArgsConstructor
 @NoArgsConstructor
 public class RedisProperties {
     private String host;
     private int port;
+    private String password;
 }

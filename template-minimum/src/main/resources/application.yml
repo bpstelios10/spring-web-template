@@ -21,6 +21,6 @@ server:
   tomcat:
     accept-count: 120
     mbeanregistry:
-      enabled: true
+      enabled: true # enable the MBeans to be used by micrometer to expose metrics
     threads:
       max: 1200
